@@ -1,0 +1,23 @@
+{
+  "name": "douying-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "抖影短视频 MVP 后端：Express + SQLite / PostgreSQL + 本地媒体存储",
+  "engines": {
+    "node": ">=22.9"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/index.js",
+    "dev": "node --env-file-if-exists=.env --watch src/index.js",
+    "seed": "node --env-file-if-exists=.env src/seed.js --force",
+    "smoke": "node scripts/smoke-test.mjs"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "pg": "^8.23.1"
+  }
+}
