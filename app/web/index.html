@@ -31,6 +31,26 @@
 
   <title>抖影</title>
   <link rel="manifest" href="manifest.json">
+
+  <script>
+    // Flutter Web（CanvasKit）引擎会硬编码请求 fonts.gstatic.com 上的 Roboto /
+    // Noto Sans SC 子集字体，国内或离线网络下必然失败并不断重试。
+    // 这里拦截这些请求，统一回退到应用自带的 Noto Sans SC 完整字体（57k 字形，
+    // 覆盖中英文），浏览器对同一 URL 只下载一次，彻底消除控制台报错。
+    (function () {
+      var LOCAL_FONT = 'assets/assets/fonts/notosanssc/NotoSansSC-6.ttf';
+      var originalFetch = window.fetch;
+      window.fetch = function (input, init) {
+        try {
+          var url = typeof input === 'string' ? input : (input && input.url) || '';
+          if (url.indexOf('fonts.gstatic.com') !== -1) {
+            return originalFetch.call(this, LOCAL_FONT, init);
+          }
+        } catch (e) { /* 保持原始请求 */ }
+        return originalFetch.apply(this, arguments);
+      };
+    })();
+  </script>
 </head>
 <body>
   <!--
