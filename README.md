@@ -22,8 +22,10 @@ DouYin/
 │   ├── src/database/      # 数据库驱动（SQLite / PostgreSQL）
 │   ├── scripts/smoke-test.mjs
 │   └── media/seed/        # 4 条演示视频（离线可用）
-└── app/                   # Flutter 客户端（Android / iOS / Web）
-    └── lib/
+├── app/                   # Flutter 客户端（Android / iOS / Web）
+│   └── lib/
+└── tools/
+    └── chrome-download-manager/ # Chrome 下载管理扩展（MV3）
 ```
 
 ## 快速启动

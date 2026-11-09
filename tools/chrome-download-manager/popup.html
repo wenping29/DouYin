@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fetch Desk</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">↓</div>
+          <div>
+            <h1>Fetch Desk</h1>
+            <p>Downloads, at a glance</p>
+          </div>
+        </div>
+        <button id="refresh" class="icon-button" type="button" aria-label="Refresh downloads" title="Refresh">↻</button>
+      </header>
+
+      <form id="download-form" class="download-form">
+        <label class="sr-only" for="download-url">Web address</label>
+        <input id="download-url" type="url" placeholder="Paste a file link (https://…)" required>
+        <button class="primary-button" type="submit">Add</button>
+      </form>
+
+      <div class="list-heading">
+        <h2>Recent downloads</h2>
+        <span id="download-count" class="count">0</span>
+      </div>
+      <p id="message" class="message" role="status" aria-live="polite"></p>
+      <section id="download-list" class="download-list" aria-label="Recent downloads"></section>
+      <p id="empty-state" class="empty-state">No downloads yet. Paste a link above or right-click a link on a page.</p>
+      <footer>Only download resources you have permission to access.</footer>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
