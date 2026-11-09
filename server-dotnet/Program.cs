@@ -1,7 +1,7 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.StaticFiles;
 using DouYing.Server;
+using DouYing.Server.Controllers;
 
 var projectRoot = FindProjectRoot();
 LoadDotEnv(Path.Combine(projectRoot, ".env"));
@@ -16,11 +16,20 @@ foreach (var folder in new[] { "videos", "covers", "avatars" })
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 210L * 1024 * 1024);
 builder.Services.AddCors();
+builder.Services.AddControllers();
 builder.Services.Configure<FormOptions>(options =>
 {
     options.MultipartBodyLengthLimit = 210L * 1024 * 1024;
     options.ValueLengthLimit = 1024 * 1024;
 });
+
+var secret = Environment.GetEnvironmentVariable("JWT_SECRET");
+if (string.IsNullOrEmpty(secret))
+    secret = "douying-dev-secret-change-me";
+builder.Services.AddSingleton<DataStore>(_ => new DataStore(projectRoot));
+builder.Services.AddSingleton<AuthService>(_ => new AuthService(secret));
+builder.Services.AddSingleton(new BackendPaths(mediaRoot));
+builder.Services.AddSingleton<BackendRuntime>();
 
 var app = builder.Build();
 app.UseCors(policy => policy
@@ -83,17 +92,24 @@ app.UseStaticFiles(new StaticFileOptions
     ContentTypeProvider = mediaProvider
 });
 
-var database = new DataStore(projectRoot);
+var database = app.Services.GetRequiredService<DataStore>();
 try
 {
     await database.InitializeAsync();
-    var secret = Environment.GetEnvironmentVariable("JWT_SECRET");
-    if (string.IsNullOrEmpty(secret))
-        secret = "douying-dev-secret-change-me";
-    var auth = new AuthService(secret);
+    var auth = app.Services.GetRequiredService<AuthService>();
     await new SeedService(database, mediaRoot, seedRoot, auth).SeedIfEmptyAsync();
-    var startedAt = Environment.TickCount64;
-    ApiEndpoints.Map(app, database, auth, mediaRoot, seedRoot, startedAt, database.Dialect);
+    app.Services.GetRequiredService<BackendRuntime>().StartedAt = Environment.TickCount64;
+    app.MapControllers();
+    MediaEndpoints.Map(app, seedRoot);
+    app.MapFallback("/api/{**path}", (HttpContext context) =>
+        Results.Json(new
+        {
+            error = new
+            {
+                code = "NOT_FOUND",
+                message = $"接口不存在：{context.Request.Method} {context.Request.Path}"
+            }
+        }, statusCode: StatusCodes.Status404NotFound));
     Console.WriteLine($"\n抖影 C# API 已启动: http://localhost:{port}");
     Console.WriteLine($"健康检查: http://localhost:{port}/api/health");
     Console.WriteLine($"数据库: {(database.Dialect == "postgres" ? "PostgreSQL" : "SQLite")}");
