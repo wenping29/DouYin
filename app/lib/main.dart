@@ -29,6 +29,7 @@ class DouYingApp extends StatelessWidget {
       title: '抖影',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
+      
       navigatorObservers: [routeObserver],
       home: Consumer<AppState>(
         builder: (context, app, _) {

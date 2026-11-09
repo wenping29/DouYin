@@ -78,6 +78,17 @@ flutter:
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
+  assets:
+    - assets/avatar_default.png
+    - assets/app_logo.png
+  fonts:
+    - family: NotoSansSC
+      fonts:
+        - asset: assets/fonts/notosanssc/NotoSansSC-6.ttf
+        - asset: assets/fonts/notosanssc/NotoSansSCMedium-4.ttf
+          weight: 500
+        - asset: assets/fonts/notosanssc/Noto-Sans-SC-Bold-2.ttf
+          weight: 700
   # example:
   # fonts:
   #   - family: Schyler

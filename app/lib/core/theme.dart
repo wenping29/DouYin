@@ -9,8 +9,9 @@ class AppColors {
 }
 
 ThemeData buildAppTheme() {
-  final base = ThemeData.dark(useMaterial3: true);
-  return base.copyWith(
+  final base = ThemeData(
+    useMaterial3: true,
+    fontFamily: 'NotoSansSC',
     scaffoldBackgroundColor: Colors.black,
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.accent,
@@ -61,4 +62,5 @@ ThemeData buildAppTheme() {
       selectionColor: Color(0x55FE2C55),
     ),
   );
+  return base;
 }
