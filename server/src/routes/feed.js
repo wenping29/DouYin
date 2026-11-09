@@ -1,23 +1,13 @@
 import express from 'express';
 import { db } from '../database/index.js';
 import { optionalAuth } from '../auth.js';
+import { rankRecommendations } from '../domain/recommendation.js';
 import { serializeVideo, VIDEO_SELECT, videoViewerState } from '../serializers.js';
 import { fail, paging, wrap } from '../util.js';
 
 export const feedRouter = express.Router();
 
 const CANDIDATE_LIMIT = 500;
-
-function recommendScore(row) {
-  const ageHours = Math.max(0, (Date.now() - Date.parse(row.created_at)) / 3600000);
-  const engagement =
-    Number(row.like_count) * 3 +
-    Number(row.comment_count) * 5 +
-    Number(row.share_count) * 4 +
-    Number(row.view_count) * 0.1 +
-    2;
-  return engagement / Math.pow(ageHours + 2, 0.55);
-}
 
 feedRouter.get(
   '/feed',
@@ -61,12 +51,9 @@ feedRouter.get(
       ? candidates.filter((row) => row.user_id !== req.user.id)
       : candidates;
 
-    visible.sort((a, b) => {
-      const diff = recommendScore(b) - recommendScore(a);
-      return diff !== 0 ? diff : b.id - a.id;
-    });
+    const ranked = rankRecommendations(visible);
 
-    const page = visible.slice(offset, offset + limit + 1);
+    const page = ranked.slice(offset, offset + limit + 1);
     const hasMore = page.length > limit;
     const items = hasMore ? page.slice(0, limit) : page;
     const state = await videoViewerState(items, req.user?.id);

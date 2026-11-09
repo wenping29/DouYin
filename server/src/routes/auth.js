@@ -5,6 +5,7 @@ import { config } from '../config.js';
 import { db, getUserRow, nowIso } from '../database/index.js';
 import { hashPassword, signToken, verifyPassword } from '../auth.js';
 import { generateAvatar } from '../cover.js';
+import { isValidPassword, isValidUsername, normalizeUsername } from '../domain/user-policy.js';
 import { publicUser } from '../serializers.js';
 import { fail, text, wrap } from '../util.js';
 
@@ -13,14 +14,14 @@ export const authRouter = express.Router();
 authRouter.post(
   '/register',
   wrap(async (req, res) => {
-    const username = String(req.body?.username || '').trim().toLowerCase();
+    const username = normalizeUsername(req.body?.username);
     const password = String(req.body?.password || '');
     const nickname = text(req.body?.nickname, 20) || username;
 
-    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+    if (!isValidUsername(username)) {
       return fail(res, 400, 'VALIDATION_ERROR', '用户名需为 3-20 位字母、数字或下划线');
     }
-    if (password.length < 6 || password.length > 64) {
+    if (!isValidPassword(password)) {
       return fail(res, 400, 'VALIDATION_ERROR', '密码长度需为 6-64 位');
     }
     const existing = await db
@@ -49,7 +50,7 @@ authRouter.post(
 authRouter.post(
   '/login',
   wrap(async (req, res) => {
-    const username = String(req.body?.username || '').trim().toLowerCase();
+    const username = normalizeUsername(req.body?.username);
     const password = String(req.body?.password || '');
     const row = await db.prepare('SELECT * FROM users WHERE username = ?').get(username);
     if (!row || !verifyPassword(password, row.password_hash)) {

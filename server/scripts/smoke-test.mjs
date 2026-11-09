@@ -112,6 +112,19 @@ const removed = await api(`/api/videos/${uploaded.id}`, { method: 'DELETE', toke
 check('删除自己的视频', removed.status === 200 && removed.json.ok === true);
 
 /* ---------- 注册 / 关注 ---------- */
+const invalidUsername = await api('/api/auth/register', {
+  method: 'POST',
+  body: { username: 'ab', password: 'demo1234' },
+});
+check('拒绝无效用户名', invalidUsername.status === 400 &&
+  invalidUsername.json?.error?.code === 'VALIDATION_ERROR');
+const invalidPassword = await api('/api/auth/register', {
+  method: 'POST',
+  body: { username: `short_${Date.now().toString(36)}`, password: '12345' },
+});
+check('拒绝过短密码', invalidPassword.status === 400 &&
+  invalidPassword.json?.error?.code === 'VALIDATION_ERROR');
+
 const username = `smoke_${Date.now().toString(36)}`;
 const registered = await api('/api/auth/register', {
   method: 'POST',

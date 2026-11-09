@@ -11,7 +11,8 @@
     "start": "node --env-file-if-exists=.env src/index.js",
     "dev": "node --env-file-if-exists=.env --watch src/index.js",
     "seed": "node --env-file-if-exists=.env src/seed.js --force",
-    "smoke": "node scripts/smoke-test.mjs"
+    "smoke": "node scripts/smoke-test.mjs",
+    "test": "node --test src/domain/user-policy.test.js src/domain/recommendation.test.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
