@@ -36,7 +36,7 @@ DouYin/
 - Flutter 3.41+ / Dart 3.11+
 - Node.js 22.9+（推荐 24；`npm start` 会自动加载 `.env`）
 - .NET 10 SDK（仅使用 C# 后端时需要）
-- 数据库：默认使用内置 `node:sqlite`，无需安装；也可选 PostgreSQL 14+
+- 数据库：Node.js 后端默认使用内置 `node:sqlite`；C# 后端默认使用 SQLite；两者均可选 PostgreSQL 14+
 - 无需 Docker、无需 FFmpeg
 
 ### 1. 启动后端

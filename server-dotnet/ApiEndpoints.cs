@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.StaticFiles;
+using DouYing.Server.Domain;
 
 namespace DouYing.Server;
 
@@ -12,7 +12,7 @@ public sealed class ApiException(int status, string code, string message) : Exce
     public string Code { get; } = code;
 }
 
-public static partial class ApiEndpoints
+public static class ApiEndpoints
 {
     private const long MaxVideoBytes = 200L * 1024 * 1024;
     private const long MaxImageBytes = 5L * 1024 * 1024;
@@ -47,12 +47,12 @@ public static partial class ApiEndpoints
         app.MapPost("/api/auth/register", async (HttpContext context) =>
         {
             var body = await ReadJson(context);
-            var username = (Property(body, "username")?.GetString() ?? "").Trim().ToLowerInvariant();
+            var username = UserPolicy.NormalizeUsername(Property(body, "username")?.GetString());
             var password = Property(body, "password")?.GetString() ?? "";
             var nickname = Text(Property(body, "nickname"), 20);
-            if (!UsernamePattern().IsMatch(username))
+            if (!UserPolicy.IsValidUsername(username))
                 throw new ApiException(400, "VALIDATION_ERROR", "用户名需为 3-20 位字母、数字或下划线");
-            if (password.Length is < 6 or > 64)
+            if (!UserPolicy.IsValidPassword(password))
                 throw new ApiException(400, "VALIDATION_ERROR", "密码长度需为 6-64 位");
             if (await db.FirstAsync("SELECT id FROM users WHERE username = ?", username) is not null)
                 throw new ApiException(409, "USERNAME_TAKEN", "用户名已被占用");
@@ -71,7 +71,7 @@ public static partial class ApiEndpoints
         app.MapPost("/api/auth/login", async (HttpContext context) =>
         {
             var body = await ReadJson(context);
-            var username = Text(Property(body, "username"), 64).ToLowerInvariant();
+            var username = UserPolicy.NormalizeUsername(Text(Property(body, "username"), 64));
             var password = Property(body, "password")?.GetString() ?? "";
             var row = await db.FirstAsync("SELECT * FROM users WHERE username = ?", username);
             if (row is null || !auth.VerifyPassword(password, String(row, "password_hash")))
@@ -404,7 +404,7 @@ public static partial class ApiEndpoints
             var viewerId = Number(viewer, "id");
             if (Number(comment, "user_id") != viewerId && Number(comment, "video_owner_id") != viewerId)
                 throw new ApiException(403, "FORBIDDEN", "没有权限删除这条评论");
-            var count = await db.TransactionAsync(async (connection, transaction) =>
+            await db.TransactionAsync(async (connection, transaction) =>
             {
                 await DataStore.ExecuteAsync(connection, transaction, "DELETE FROM comments WHERE id = ?", id);
                 await DataStore.ExecuteAsync(connection, transaction,
@@ -412,7 +412,6 @@ public static partial class ApiEndpoints
                     Number(comment, "video_id"));
                 return true;
             });
-            _ = count;
             var updated = await db.FirstAsync("SELECT comment_count FROM videos WHERE id = ?", Number(comment, "video_id"));
             return Json(new { ok = true, commentCount = Number(updated!, "comment_count") });
         });
@@ -705,15 +704,6 @@ public static partial class ApiEndpoints
         int.TryParse(context.Request.Query[name], NumberStyles.Integer, CultureInfo.InvariantCulture, out var value)
             ? value : fallback;
 
-    private static double RecommendScore(Dictionary<string, object?> row)
-    {
-        var created = DateTimeOffset.TryParse(String(row, "created_at"), out var date) ? date : DateTimeOffset.UtcNow;
-        var ageHours = Math.Max(0, (DateTimeOffset.UtcNow - created).TotalHours);
-        var engagement = Number(row, "like_count") * 3d + Number(row, "comment_count") * 5d +
-                         Number(row, "share_count") * 4d + Number(row, "view_count") * 0.1d + 2;
-        return engagement / Math.Pow(ageHours + 2, 0.55);
-    }
-
     private static string EscapeLike(string value) =>
         value.Replace("\\", "\\\\").Replace("%", "\\%").Replace("_", "\\_");
 
@@ -729,6 +719,11 @@ public static partial class ApiEndpoints
     private static IResult Json(object value, int status = 200) =>
         Results.Json(value, statusCode: status);
 
-    [GeneratedRegex("^[a-zA-Z0-9_]{3,20}$", RegexOptions.CultureInvariant)]
-    private static partial Regex UsernamePattern();
+    private static double RecommendScore(Dictionary<string, object?> row)
+    {
+        var now = DateTimeOffset.UtcNow;
+        var created = DateTimeOffset.TryParse(String(row, "created_at"), out var date) ? date : now;
+        return FeedRecommendation.Score(created, Number(row, "like_count"), Number(row, "comment_count"),
+            Number(row, "share_count"), Number(row, "view_count"), now);
+    }
 }
