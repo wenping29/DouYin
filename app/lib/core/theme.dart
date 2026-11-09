@@ -12,6 +12,7 @@ ThemeData buildAppTheme() {
   final base = ThemeData(
     useMaterial3: true,
     fontFamily: 'NotoSansSC',
+    fontFamilyFallback: const ['NotoColorEmoji'],
     scaffoldBackgroundColor: Colors.black,
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.accent,
@@ -23,7 +24,9 @@ ThemeData buildAppTheme() {
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
-      titleTextStyle: TextStyle(
+      titleTextStyle: const TextStyle(
+        fontFamily: 'NotoSansSC',
+        fontFamilyFallback: ['NotoColorEmoji'],
         color: Colors.white,
         fontSize: 17,
         fontWeight: FontWeight.w600,

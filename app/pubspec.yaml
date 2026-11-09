@@ -89,6 +89,10 @@ flutter:
           weight: 500
         - asset: assets/fonts/notosanssc/Noto-Sans-SC-Bold-2.ttf
           weight: 700
+    # 表情符号本地兜底，避免 Web 端向 fonts.gstatic.com 下载 Noto Color Emoji
+    - family: NotoColorEmoji
+      fonts:
+        - asset: assets/fonts/emoji/NotoColorEmoji.ttf
   # example:
   # fonts:
   #   - family: Schyler
