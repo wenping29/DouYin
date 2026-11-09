@@ -1,6 +1,6 @@
 # 抖影 DouYing
 
-一个**能真正跑起来**的抖音风格竖屏短视频 MVP：Flutter 双端 App + Node.js 真实后端 + SQLite / PostgreSQL + 本地媒体存储。
+一个**能真正跑起来**的抖音风格竖屏短视频 MVP：Flutter 双端 App + Node.js 后端，并提供独立的 ASP.NET Core C# 后端实现；支持 SQLite / PostgreSQL 与本地媒体存储。
 
 - 打开即刷：推荐流 / 关注流、竖屏上下滑、自动播放与循环
 - 完整互动：点赞、评论、分享、关注、播放计数
@@ -18,10 +18,11 @@ DouYin/
 ├── docs/
 │   ├── DESIGN.md          # 产品与技术设计方案
 │   └── API.md             # 完整接口契约
-├── server/                # Node.js + Express + SQLite / PostgreSQL
+├── server/                # Node.js + Express + SQLite / PostgreSQL（原后端）
 │   ├── src/database/      # 数据库驱动（SQLite / PostgreSQL）
 │   ├── scripts/smoke-test.mjs
 │   └── media/seed/        # 4 条演示视频（离线可用）
+├── server-dotnet/         # ASP.NET Core + C#（独立后端项目）
 ├── app/                   # Flutter 客户端（Android / iOS / Web）
 │   └── lib/
 └── tools/
@@ -34,6 +35,7 @@ DouYin/
 
 - Flutter 3.41+ / Dart 3.11+
 - Node.js 22.9+（推荐 24；`npm start` 会自动加载 `.env`）
+- .NET 10 SDK（仅使用 C# 后端时需要）
 - 数据库：默认使用内置 `node:sqlite`，无需安装；也可选 PostgreSQL 14+
 - 无需 Docker、无需 FFmpeg
 
@@ -105,6 +107,21 @@ DB_DRIVER=postgres DATABASE_URL=postgres://postgres:postgres@127.0.0.1:5432/douy
 - 切换数据库后重新执行 `npm run seed` 可强制写入干净的演示数据
 - 客户端不需要任何改动，API 行为在两种数据库下保持一致
 
+### C# 后端（独立项目）
+
+`server-dotnet/` 是与 Node.js 后端并列的完整 ASP.NET Core 实现，保留相同的 API 契约，可直接替换客户端所连接的服务。原 `server/` 项目保持不变。
+
+```powershell
+cd server-dotnet
+dotnet run
+```
+
+默认监听 `http://localhost:8080`，使用独立 SQLite 数据库 `server-dotnet/data/douying.db` 并自动初始化演示账号。演示视频复用仓库中的 `server/media/seed/`；新上传的媒体和生成封面保存在 `server-dotnet/media/`。
+
+可复制 `server-dotnet/.env.example` 为 `server-dotnet/.env` 后配置 `JWT_SECRET`、`PORT` 或数据库。PostgreSQL 可设置 `DB_DRIVER=postgres` 与 `DATABASE_URL`；也支持 `PGHOST` / `PGPORT` / `PGUSER` / `PGPASSWORD` / `PGDATABASE` / `PGSSL`。SQLite 可用 `DB_PATH` 指定路径。
+
+两种后端不能同时占用同一个端口；如需并行运行，可为其中一个配置不同的 `PORT`。
+
 ### 2. 启动 App
 
 ```bash
@@ -150,6 +167,11 @@ flutter run -d chrome
 cd server
 npm run smoke
 
+# 也可将同一组接口测试用于 C# 后端（需先启动 server-dotnet）
+cd ..
+$env:BASE_URL="http://127.0.0.1:8080"
+node server\scripts\smoke-test.mjs
+
 # 客户端：静态检查 + 单元/Widget 测试
 cd app
 flutter analyze
@@ -190,9 +212,9 @@ npm run seed
 | 层 | 技术 |
 | --- | --- |
 | 客户端 | Flutter 3.41、Provider、Dio、video_player、image_picker、cached_network_image |
-| 后端 | Node.js 24、Express、JSON Web Token、Multer |
+| 后端 | Node.js 24 / Express（`server/`）；C# / ASP.NET Core 10（`server-dotnet/`） |
 | 数据库 | SQLite（默认，WAL）/ PostgreSQL 14+ |
-| 媒体 | 本地磁盘 + Express 静态服务（原生 Range / 206） |
+| 媒体 | 本地磁盘 + Express / ASP.NET Core 静态服务（Range / 206） |
 
 ## 设计文档
 

@@ -8,6 +8,17 @@ server/media/avatars/*
 !server/media/videos/.gitkeep
 !server/media/covers/.gitkeep
 !server/media/avatars/.gitkeep
+server-dotnet/bin/
+server-dotnet/obj/
+server-dotnet/data/
+server/bin/
+server/obj/
+server-dotnet/media/videos/*
+server-dotnet/media/covers/*
+server-dotnet/media/avatars/*
+!server-dotnet/media/videos/.gitkeep
+!server-dotnet/media/covers/.gitkeep
+!server-dotnet/media/avatars/.gitkeep
 
 # flutter
 app/.dart_tool/
