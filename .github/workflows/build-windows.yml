@@ -1,0 +1,64 @@
+name: Build Windows
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.41.4
+          channel: stable
+          cache: true
+
+      - name: Enable Windows desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: Generate Windows runner when missing
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "windows/CMakeLists.txt")) {
+            flutter create --platforms=windows --project-name douying .
+          }
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Windows application
+        run: flutter build windows --release
+
+      - name: Package Windows application
+        shell: pwsh
+        run: |
+          $releaseDirectory = "build/windows/x64/runner/Release"
+          if (-not (Test-Path "$releaseDirectory/douying.exe")) {
+            throw "Windows release executable was not produced."
+          }
+          Compress-Archive -Path "$releaseDirectory/*" -DestinationPath "build/douying-windows-x64.zip" -Force
+
+      - name: Upload Windows package
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64-package
+          if-no-files-found: error
+          path: app/build/douying-windows-x64.zip

@@ -159,6 +159,22 @@ flutter test
 flutter build web
 ```
 
+## GitHub Actions 打包
+
+在 GitHub 仓库的 **Actions** 页面可分别运行以下工作流。它们也会在推送到 `main` 或创建 Pull Request 时自动运行；构建完成后，从对应运行记录的 **Artifacts** 下载产物。
+
+| 工作流 | 产物 |
+| --- | --- |
+| `Build Android` | `android-packages`：Android APK 和 AAB |
+| `Build Windows` | `windows-x64-package`：Windows x64 ZIP，解压后运行 `douying.exe` |
+| `Build Web` | `web-package`：可部署的 Web 静态文件 ZIP |
+
+工作流使用 Flutter 3.41.4。Android 当前沿用项目 Gradle 中的 debug 签名配置，APK 可用于测试安装；AAB 不能直接发布到应用商店，正式发布前需配置发布签名。
+
+发布 Web 前，在仓库 **Settings → Secrets and variables → Actions → Variables** 中设置 `API_BASE_URL` 为可访问的后端 API 地址（例如 `https://api.example.com`）。未设置时，Web 构建仍可完成，但会使用客户端默认地址。
+
+当前仓库还没有 iOS 和鸿蒙（OpenHarmony）平台工程，因此工作流暂不生成 iOS 或鸿蒙安装包。Windows 工作流会在 CI 中生成标准 Flutter Windows runner；如需本地开发 Windows 版本，可在 `app` 目录执行 `flutter create --platforms=windows --project-name douying .`。
+
 ## 常用操作
 
 ```bash
