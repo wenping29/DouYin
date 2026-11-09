@@ -9,12 +9,12 @@ class AppConfig {
 
   static String get baseUrl {
     if (_envUrl.isNotEmpty) return _envUrl;
-    if (kIsWeb) return 'http://127.0.0.1:8080';
+    if (kIsWeb) return 'http://127.0.0.1:8099';
     if (defaultTargetPlatform == TargetPlatform.android) {
       // Android 模拟器访问宿主机
-      return 'http://10.0.2.2:8080';
+      return 'http://10.0.2.2:8099';
     }
-    return 'http://127.0.0.1:8080';
+    return 'http://127.0.0.1:8099';
   }
 
   static String? absolute(String? path) {
