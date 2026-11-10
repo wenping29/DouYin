@@ -1,0 +1,13 @@
+{
+  "name": "cleanview-adblock-extension",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CleanView — MV3 浏览器广告拦截扩展（本地优先、可关闭匿名统计）",
+  "scripts": {
+    "build:rules": "node tools/build-rules.js --input filters/sample-filters.txt --out-static rules/ruleset_core.json --out-cosmetic src/cosmetic-selectors.js --report tools/build-report.json --max-static 30000",
+    "build:custom": "node tools/build-rules.js --input filters/custom.txt --out-static rules/ruleset_custom.json --out-cosmetic src/cosmetic-custom.js --report tools/build-report-custom.json --id-base 200000 --priority-offset 100 --cosmetic-var CV_COSMETIC_CUSTOM --max-static 50000 --max-cosmetic 10000 --minify true",
+    "build:full": "node tools/fetch-rules.js",
+    "eval": "node evaluation/run-eval.js",
+    "server": "node server/stats-server.js"
+  }
+}

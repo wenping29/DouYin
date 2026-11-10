@@ -1,0 +1,15 @@
+# ===== 生成的规则产物（受上游许可证约束，不入库；由 fetch-rules.js / build-rules.js 构建期生成） =====
+rules/ruleset_core.json
+rules/ruleset_custom.json
+src/cosmetic-selectors.js
+src/cosmetic-custom.js
+tools/build-report.json
+tools/build-report-custom.json
+evaluation/eval-last.json
+
+# ===== 下载的中间文件 =====
+filters/_fetched/
+rules/_generated/
+
+# ===== 本地环境变量（真实统计端点 token 等，切勿提交） =====
+.env

@@ -1,0 +1,49 @@
+! ============================================================
+! CleanView 示例过滤规则（原创整理，仅用于演示语法与预编译流程）
+! 不复制任何第三方规则库内容；生产替换为你已确认许可证的规则源。
+! 运行：node tools/build-rules.js --input filters/sample-filters.txt
+! ============================================================
+[Adblock Plus 2.0]
+
+! ---- 1. 基础域名拦截（||域名^ 语法，DNR 原生支持） ----
+||doubleclick.net^
+||googlesyndication.com^$script,image,xmlhttprequest,subdocument
+||googletagservices.com^$script
+||adservice.google.com^$third-party
+||googleadservices.com^
+||adnxs.com^$image,xmlhttprequest
+||adsrvr.org^
+||criteo.com^
+||taboola.com^$third-party
+||outbrain.com^
+||scorecardresearch.com^
+
+! ---- 2. URL 模式与锚点 ----
+*banner_ad*$image
+|https://ads.example-cdn.net/|$script
+
+! ---- 3. important（提高优先级） ----
+||tracker.example.net^$important,third-party
+
+! ---- 4. 例外规则（避免误杀，priority 高于普通 block） ----
+@@||ads.allowed-site.example^$document
+
+! ---- 5. 域名限定与第一方限定 ----
+||adtrack.example^$domain=news.example.com|blog.example.com
+||pixel.example^$image,~third-party
+
+! ---- 6. 正则规则（成本高，脚本单独限量） ----
+/^https?:\/\/ad[0-9]+\.example\.net\//$script
+
+! ---- 7. Cosmetic（元素隐藏，输出给 content script） ----
+##ins.adsbygoogle
+##[data-ad-slot]
+##.ad-container
+##.advertisement-wrapper
+news.example.com##.sponsored-card
+~shop.example.com##.promo-banner
+
+! ---- 8. 以下为「保守跳过」演示（脚本会跳过并写入构建报告） ----
+||redirect.example^$redirect=nooptext
+||csp.example^$csp=script-src 'none'
+#@#.ad-container

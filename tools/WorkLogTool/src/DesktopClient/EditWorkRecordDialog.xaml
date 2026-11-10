@@ -1,0 +1,63 @@
+<Window x:Class="WorkLogTool.EditWorkRecordDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="编辑工作记录" Width="500" Height="800"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow"
+        ResizeMode="NoResize">
+    <StackPanel Margin="20">
+        <TextBlock Text="日历:" Margin="0 10 0 5"/>
+        <Calendar x:Name="Calendar" Margin="0 0 0 10"/>
+
+        <TextBlock Text="工作内容:" Margin="0 10 0 5"/>
+        <TextBox x:Name="ContentTextBox" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Margin="0 0 0 10"/>
+
+        <TextBlock Text="耗时(小时):" Margin="0 10 0 5"/>
+        <TextBox x:Name="HoursTextBox" Width="80" Margin="0 0 0 10"/>
+
+        <TextBlock Text="成本:" Margin="0 10 0 5"/>
+        <TextBox x:Name="CostTextBox" Width="80" Margin="0 0 0 10"/>
+
+        <TextBlock Text="工作状态" Margin="0 10 0 5"/>
+        <ToggleButton x:Name="StatusToggleButton" Width="80" Margin="0 0 0 10" Click="StatusToggleButton_Click"/>
+
+        <TextBlock Text="工作进度:" Margin="0 10 0 5"/>
+        <ComboBox x:Name="ProgressComboBox" Margin="0 0 0 10" SelectedIndex="0">
+            <ComboBox.Items>
+                <sys:Int32>0</sys:Int32>
+                <sys:Int32>10</sys:Int32>
+                <sys:Int32>20</sys:Int32>
+                <sys:Int32>30</sys:Int32>
+                <sys:Int32>40</sys:Int32>
+                <sys:Int32>50</sys:Int32>
+                <sys:Int32>60</sys:Int32>
+                <sys:Int32>70</sys:Int32>
+                <sys:Int32>80</sys:Int32>
+                <sys:Int32>90</sys:Int32>
+                <sys:Int32>100</sys:Int32>
+            </ComboBox.Items>
+        </ComboBox>
+
+        <TextBlock Text="开始时间" Margin="0 10 0 5"/>
+        <StackPanel Orientation="Horizontal">
+            <DatePicker x:Name="StartDatePicker" Width="120" Margin="0 0 10 0"/>
+            <TextBox x:Name="StartHourTextBox" Width="50" Margin="0 0 5 0"/>
+            <TextBlock Text=":" VerticalAlignment="Center" Margin="0 0 5 0"/>
+            <TextBox x:Name="StartMinuteTextBox" Width="50"/>
+        </StackPanel>
+
+        <TextBlock Text="结束时间" Margin="0 10 0 5"/>
+        <StackPanel Orientation="Horizontal">
+            <DatePicker x:Name="EndDatePicker" Width="120" Margin="0 0 10 0"/>
+            <TextBox x:Name="EndHourTextBox" Width="50" Margin="0 0 5 0"/>
+            <TextBlock Text=":" VerticalAlignment="Center" Margin="0 0 5 0"/>
+            <TextBox x:Name="EndMinuteTextBox" Width="50"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 20 0 0">
+            <Button x:Name="CancelButton" Content="关闭" Margin="0 0 10 0" Width="80" Click="CancelButton_Click"/>
+            <Button x:Name="SaveButton" Content="保存修改" Width="100" Click="SaveButton_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

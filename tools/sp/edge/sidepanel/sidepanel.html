@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SP 侧边栏助手</title>
+  <link rel="stylesheet" href="sidepanel.css">
+  <script>
+    // 首帧前落地主题，避免深色模式下打开面板先闪一下白底
+    try {
+      chrome.storage.local.get('theme').then((saved) => {
+        const theme = saved.theme === 'follow'
+          ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : (saved.theme || 'light');
+        document.documentElement.dataset.theme = theme;
+      });
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <div class="layout">
+    <div class="main">
+      <div class="collapsed-bar">
+        <button id="navToggle" class="menu-btn ico" data-icon="menu" data-tip="导航菜单" aria-haspopup="true" aria-expanded="false"></button>
+      </div>
+      <div id="navMenu" class="nav-menu" hidden>
+        <div class="nav-menu-top">
+          <button id="navExpand" class="tip-top" data-icon="unfold" data-tip="展开功能栏"></button>
+          <button id="navFull" class="tip-top" data-icon="expand" data-tip="全页模式打开"></button>
+        </div>
+        <div id="navGrid" class="nav-grid">
+          <button class="nav-item active" data-view="chat"><i data-icon="chat"></i><span>聊天</span></button>
+          <button class="nav-item" data-view="ask"><i data-icon="sparkle"></i><span>提问</span></button>
+          <button class="nav-item" data-view="translate"><i data-icon="translate"></i><span>翻译</span></button>
+          <button class="nav-item" data-view="code"><i data-icon="code"></i><span>Code</span></button>
+          <button class="nav-item" data-view="hand"><i data-icon="hand"></i><span>Hand</span></button>
+          <button class="nav-item" data-view="notes"><i data-icon="notes"></i><span>笔记</span></button>
+          <button class="nav-item" data-view="create"><i data-icon="create"></i><span>创作</span></button>
+          <button class="nav-item" data-view="write"><i data-icon="write"></i><span>写作</span></button>
+          <button class="nav-item" data-view="ocr"><i data-icon="ocr"></i><span>OCR</span></button>
+          <button class="nav-item" data-view="pdf"><i data-icon="pdf"></i><span>PDF</span></button>
+          <button class="nav-item" data-view="tools"><i data-icon="grid"></i><span>工具</span></button>
+          <button class="nav-item" data-view="settings"><i data-icon="gear"></i><span>设置</span></button>
+        </div>
+        <div class="nav-menu-foot">
+          <button id="navNew" class="tip-top" data-icon="compose" data-tip="新聊天"></button>
+          <button id="navHistory" class="tip-top" data-icon="history" data-tip="聊天记录"></button>
+          <span class="spacer"></span>
+          <button id="navAvatar" class="nav-avatar" aria-label="积分与账户">
+            <img src="../icons/icon32.png" alt="" width="22" height="22">
+          </button>
+        </div>
+      </div>
+      <div id="notice" class="notice" hidden></div>
+
+      <div id="chatView" class="chat-view">
+        <main id="thread" class="thread"></main>
+
+        <section id="composer" class="composer">
+          <div id="selectionCard" class="selection-card" hidden>
+            <span class="selection-label">已选中</span>
+            <span id="selectionText" class="selection-text">尚未选中网页文字</span>
+            <button id="runSelection" class="mini ico tip-top" data-icon="translate" data-tip="译成中文"></button>
+          </div>
+          <div id="picks" class="picks" hidden></div>
+          <div id="attachments" class="attachments" hidden></div>
+          <div class="composer-row controls">
+            <div id="modelPicker" class="model-picker">
+              <button id="modelButton" class="model-current tip-top" type="button" aria-haspopup="listbox" aria-expanded="false" data-tip="切换大模型">
+                <span id="modelLogo" class="model-logo" aria-hidden="true"></span>
+                <span id="modelName" class="model-name">模型</span>
+                <span class="model-caret" aria-hidden="true"></span>
+              </button>
+              <div id="modelMenu" class="model-menu" role="listbox" aria-label="选择模型" hidden></div>
+            </div>
+            <button id="btnShot" class="tool ico tip-top" data-icon="camera" data-tip="框选截图：在网页里拖出区域，只截这一块发给模型"></button>
+            <button id="btnReadPage" class="tool ico tip-top" data-icon="book" data-tip="阅读此页：发送时带上本页正文" aria-pressed="false"></button>
+            <input id="filePicker" type="file" accept="image/*,.txt,.md,.csv,.json,.log" multiple hidden>
+            <button id="newChat" class="mini ico tip-top" data-icon="compose" data-tip="新聊天"></button>
+            <button id="openHistory" class="mini ico tip-top tip-in" data-icon="history" data-tip="聊天记录"></button>
+          </div>
+          <textarea id="input" rows="3" placeholder="输入问题，Enter 发送，Shift + Enter 换行"></textarea>
+          <div class="composer-row sendbar">
+            <span id="status" class="status" aria-live="polite">准备中</span>
+            <button id="btnAdd" class="tool ico tip-top tip-out" data-icon="plus" data-tip="添加技能、插件、计划或目标" aria-haspopup="true" aria-expanded="false"></button>
+            <button id="btnFile" class="tool ico tip-top" data-icon="clip" data-tip="附加文件：图片或 txt/md 等文本"></button>
+            <button id="btnVoice" class="tool ico tip-top" data-icon="mic" data-tip="语音输入：说完自动转成文字" aria-pressed="false"></button>
+            <button id="stop" class="tool danger ico lg tip-top" data-icon="stop" data-tip="停止生成" hidden></button>
+            <button id="send" class="primary ico lg tip-top tip-in" data-icon="send" data-tip="发送"></button>
+          </div>
+          <div id="addMenu" class="add-menu" hidden>
+            <div class="menu-head">添加到对话</div>
+            <div class="menu-tabs" role="tablist">
+              <button type="button" role="tab" data-tab="skill" class="active">技能</button>
+              <button type="button" role="tab" data-tab="plugin">插件</button>
+              <button type="button" role="tab" data-tab="plan">计划</button>
+              <button type="button" role="tab" data-tab="goal">目标</button>
+            </div>
+            <div id="menuBody" class="menu-body"></div>
+          </div>
+        </section>
+      </div>
+
+      <section id="askView" class="pane" hidden>
+        <p class="tip">点一条常用提问，内容会填进输入框，可再修改后发送。</p>
+        <div id="askList" class="prompt-list"></div>
+      </section>
+
+      <section id="translateView" class="pane" hidden>
+        <div class="pane-block">
+          <div class="pane-label">网页中选中的文字</div>
+          <div id="translateSource" class="quote">还没有选中文字。先在网页里划选一段，再点下面的按钮。</div>
+        </div>
+        <div class="row wrap">
+          <button id="refreshSelection" class="ghost">读取当前选中</button>
+          <button id="translateZh" class="primary">译成中文</button>
+          <button id="translateEn" class="ghost">译成英文</button>
+        </div>
+        <p class="tip">右侧「工具」里也可以直接做总结、大纲、解释、润色。</p>
+      </section>
+
+      <section id="toolsView" class="pane" hidden>
+        <div id="tools" class="tools-grid"></div>
+        <p class="tip">「总结全文」「分段大纲」读取当前标签页正文；「译成中文」「解释划线」「润色改写」需要先在网页中选中文字。</p>
+      </section>
+
+      <section id="codeView" class="pane" hidden>
+        <div class="pane-empty">
+          <i data-icon="code"></i>
+          <strong>Code</strong>
+          <span>写代码、解释代码、排查报错，功能待接入。</span>
+        </div>
+      </section>
+
+      <section id="handView" class="pane" hidden>
+        <div class="pane-empty">
+          <i data-icon="hand"></i>
+          <strong>Hand</strong>
+          <span>把手动任务交给助手按步骤执行，功能待接入。</span>
+        </div>
+      </section>
+
+      <section id="notesView" class="pane" hidden>
+        <div class="pane-empty">
+          <i data-icon="notes"></i>
+          <strong>笔记</strong>
+          <span>把网页正文和对话整理成笔记，功能待接入。</span>
+        </div>
+      </section>
+
+      <section id="createView" class="pane" hidden>
+        <div class="pane-empty">
+          <i data-icon="create"></i>
+          <strong>创作</strong>
+          <span>文案、脚本等创意内容生成，功能待接入。</span>
+        </div>
+      </section>
+
+      <section id="writeView" class="pane" hidden>
+        <div class="pane-empty">
+          <i data-icon="write"></i>
+          <strong>写作</strong>
+          <span>长文起草、续写与润色，功能待接入。</span>
+        </div>
+      </section>
+
+      <section id="ocrView" class="pane" hidden>
+        <div class="pane-empty">
+          <i data-icon="ocr"></i>
+          <strong>OCR</strong>
+          <span>识别图片和截图里的文字，功能待接入。</span>
+        </div>
+      </section>
+
+      <section id="pdfView" class="pane" hidden>
+        <div class="pane-empty">
+          <i data-icon="pdf"></i>
+          <strong>PDF</strong>
+          <span>读取 PDF 正文、总结与问答，功能待接入。</span>
+        </div>
+      </section>
+
+      <section id="settingsView" class="pane settings" hidden>
+        <div class="about">
+          <img src="../icons/icon48.png" alt="SP 图标" width="40" height="40">
+          <div>
+            <strong>SP 侧边栏助手</strong>
+            <span id="brandVersion" class="muted"></span>
+          </div>
+        </div>
+        <label>主题
+          <select id="themeSelect">
+            <option value="light">浅色</option>
+            <option value="dark">深色</option>
+            <option value="midnight">深夜</option>
+            <option value="follow">跟随浏览器</option>
+          </select>
+        </label>
+        <label>设备备注
+          <input id="labelInput" type="text">
+        </label>
+        <div class="info-row">
+          <span class="info-label">设备 ID</span>
+          <code id="deviceInput" class="info-value"></code>
+          <button class="copy-btn" type="button" data-copy="deviceInput">复制</button>
+        </div>
+        <div class="info-row">
+          <span class="info-label">访问令牌</span>
+          <code id="tokenInput" class="info-value"></code>
+          <button class="copy-btn" type="button" data-copy="tokenInput">复制</button>
+        </div>
+        <div class="info-row" id="accountRow" hidden>
+          <span class="info-label">当前账号</span>
+          <span id="accountEmail" class="info-value"></span>
+        </div>
+        <label class="switch">
+          <input id="launcherToggle" type="checkbox">
+          <span>在网页右侧显示悬浮快捷按钮</span>
+        </label>
+
+        <section id="memoryBox" class="memory-box" hidden>
+          <div class="memory-head">
+            <strong>长期记忆</strong>
+            <span id="memoryCount" class="muted"></span>
+          </div>
+          <p class="tip">登录后生效，换设备登录同一账号可恢复。助手只在相关时参考，不会主动复述。</p>
+          <label class="switch">
+            <input id="memoryToggle" type="checkbox">
+            <span>启用长期记忆</span>
+          </label>
+          <div class="memory-add">
+            <input id="memoryInput" type="text" maxlength="200"
+                   placeholder="例如：我在做 .NET 项目，回答尽量给代码">
+            <button id="memoryAdd" class="ghost">添加</button>
+          </div>
+          <ul id="memoryList" class="memory-list"></ul>
+          <button id="memoryClear" class="ghost" hidden>清空全部记忆</button>
+        </section>
+
+        <div class="settings-actions">
+          <button id="saveSettings" class="primary">保存并重连</button>
+          <button id="reregister" class="ghost">重新注册</button>
+          <button id="openCredits" class="ghost">积分明细</button>
+          <button id="logoutBtn" class="ghost" hidden>退出登录</button>
+        </div>
+        <p class="tip">服务器由后台统一配置；「重新注册」会生成新设备并退出当前账号。</p>
+      </section>
+    </div>
+
+    <nav class="rail" id="rail">
+      <div class="rail-top">
+        <button id="railFold" class="tip-left" data-icon="fold" data-tip="折叠面板" aria-pressed="false"></button>
+        <button id="railFull" class="tip-left" data-icon="expand" data-tip="全页模式打开"></button>
+      </div>
+      <button data-view="chat" class="active tip-left" data-icon="chat" data-tip="聊天"></button>
+      <button data-view="ask" class="tip-left" data-icon="sparkle" data-tip="提问"></button>
+      <button data-view="translate" class="tip-left" data-icon="translate" data-tip="翻译"></button>
+      <button data-view="code" class="tip-left" data-icon="code" data-tip="Code 代码"></button>
+      <button data-view="hand" class="tip-left" data-icon="hand" data-tip="Hand 手动任务"></button>
+      <button data-view="notes" class="tip-left" data-icon="notes" data-tip="笔记"></button>
+      <button data-view="create" class="tip-left" data-icon="create" data-tip="创作"></button>
+      <button data-view="write" class="tip-left" data-icon="write" data-tip="写作"></button>
+      <button data-view="ocr" class="tip-left" data-icon="ocr" data-tip="OCR 识字"></button>
+      <button data-view="pdf" class="tip-left" data-icon="pdf" data-tip="PDF 文档"></button>
+      <button data-view="tools" class="tip-left" data-icon="grid" data-tip="工具"></button>
+      <button data-view="settings" class="tip-left" data-icon="gear" data-tip="设置"></button>
+      <div class="avatar-dock" id="avatarDock">
+
+      <button id="avatar" class="avatar" aria-label="积分与账户" aria-haspopup="true" aria-expanded="false">
+        <img src="../icons/icon32.png" alt="" width="22" height="22">
+      </button>
+      <div class="account-pop" id="accountPop">
+        <div class="pop-card">
+          <div class="pop-id">
+            <strong id="popDevice">本机设备</strong>
+            <span id="popStatus" class="pop-status">准备中</span>
+          </div>
+          <div class="pop-credits" id="popCredits"><strong id="popBalance">—</strong><span>积分</span></div>
+          <button id="popRecharge" class="primary ico tip-top" data-icon="wallet" data-tip="充值积分"></button>
+        </div>
+        <div class="pop-menu">
+          <button class="pop-item" id="popAuth" data-pop="auth"><i class="pop-ico" id="popAuthIcon" data-icon="user"></i><span id="popAuthLabel">登录 / 注册</span></button>
+          <button class="pop-item" data-pop="credits"><i class="pop-ico" data-icon="coin"></i>积分明细</button>
+          <button class="pop-item" data-pop="history"><i class="pop-ico" data-icon="history"></i>聊天记录</button>
+          <button class="pop-item" data-pop="settings"><i class="pop-ico" data-icon="gear"></i>设置</button>
+        </div>
+        <div class="pop-foot">
+          <span id="popVersion"></span>
+          <span>移开自动收起</span>
+        </div>
+      </div>
+    </div>
+    </nav>
+    
+  </div>
+
+  <dialog id="historyDialog">
+    <h2>聊天历史</h2>
+    <p id="historySync" class="tip"></p>
+    <ul id="historyList" class="history-list"></ul>
+    <div class="row">
+      <button id="clearHistory" class="ghost">清空全部</button>
+      <span class="spacer"></span>
+      <button id="closeHistory" class="primary">关闭</button>
+    </div>
+  </dialog>
+
+  <dialog id="creditsDialog">
+    <h2>积分明细</h2>
+    <div class="balance-line">当前余额 <strong id="creditsBalance">—</strong></div>
+    <div class="recharge">
+      <p class="tip">点击头像浮层的「充值积分」可直接购买；也可以把下面的设备 ID 发给管理员充值。</p>
+      <div class="row">
+        <input id="rechargeDevice" type="text" readonly spellcheck="false">
+        <button id="copyRechargeDevice" class="ghost">复制设备 ID</button>
+      </div>
+    </div>
+    <ul id="transactions" class="transactions"></ul>
+    <div class="row">
+      <button id="refreshCredits" class="ghost">刷新</button>
+      <span class="spacer"></span>
+      <button id="closeCredits" class="primary">关闭</button>
+    </div>
+  </dialog>
+
+  <dialog id="rechargeDialog" class="recharge-dialog">
+    <h2>充值积分</h2>
+    <p class="tip">选择套餐和支付方式，支付完成后积分自动到账。</p>
+    <div id="rechargePackages" class="recharge-packages"></div>
+    <div id="rechargeChannels" class="recharge-channels" role="radiogroup" aria-label="支付方式"></div>
+    <p id="rechargeError" class="auth-error" hidden></p>
+    <div id="rechargePayArea" class="recharge-pay" hidden>
+      <img id="rechargeQr" class="recharge-qr" alt="支付二维码" hidden>
+      <p id="rechargePayHint" class="tip"></p>
+      <div class="row">
+        <button id="rechargeMockPay" class="primary" hidden>模拟支付成功</button>
+        <button id="rechargeOpenPay" class="ghost" hidden>打开支付页面</button>
+      </div>
+    </div>
+    <p id="rechargeStatus" class="tip" hidden></p>
+    <div class="row">
+      <button id="rechargeClose" class="ghost">关闭</button>
+      <span class="spacer"></span>
+      <button id="rechargeSubmit" class="primary">去支付</button>
+    </div>
+  </dialog>
+
+  <dialog id="authDialog" class="auth-dialog">
+    <h2 id="authTitle">登录账号</h2>
+    <div class="auth-tabs" role="tablist">
+      <button type="button" role="tab" data-auth-tab="login" class="active">登录</button>
+      <button type="button" role="tab" data-auth-tab="register">注册</button>
+    </div>
+    <label>邮箱
+      <input id="authEmail" type="email" autocomplete="email" spellcheck="false" placeholder="you@example.com">
+    </label>
+    <label id="authNameRow" hidden>昵称（可选）
+      <input id="authName" type="text" autocomplete="nickname" maxlength="32" placeholder="不填就用邮箱前缀">
+    </label>
+    <label>密码
+      <input id="authPassword" type="password" autocomplete="current-password" placeholder="至少 8 位">
+    </label>
+    <label id="authCodeRow" hidden>邮箱验证码
+      <span class="code-row">
+        <input id="authCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6 位验证码">
+        <button id="authSendCode" type="button" class="ghost">发送验证码</button>
+      </span>
+    </label>
+    <p id="authError" class="auth-error" hidden></p>
+    <p id="authTip" class="tip">登录后积分、充值记录和聊天记录跟随账号，换设备登录同一账号即可继续使用。</p>
+    <div class="row">
+      <button id="authCancel" class="ghost">取消</button>
+      <span class="spacer"></span>
+      <button id="authSubmit" class="primary">登录</button>
+    </div>
+  </dialog>
+
+  <!-- 退出登录放在「设置」里，再经此确认框，避免头像浮层误点 -->
+  <dialog id="logoutDialog">
+    <h2>退出登录</h2>
+    <p class="tip">退出后本机回到匿名账号，余额按匿名账号显示；积分和聊天记录仍保存在云端，重新登录同一账号即可继续使用。</p>
+    <div class="row">
+      <button id="logoutCancel" class="ghost">取消</button>
+      <span class="spacer"></span>
+      <button id="logoutConfirm" class="primary danger">确认退出</button>
+    </div>
+  </dialog>
+
+  <dialog id="annotateDialog" class="annotate-dialog">
+    <h2>标绘截图</h2>
+    <div class="annotate-toolbar">
+      <div class="annotate-tools" role="group" aria-label="标绘工具">
+        <button type="button" data-tool="rect" class="active">矩形</button>
+        <button type="button" data-tool="ellipse">圆圈</button>
+        <button type="button" data-tool="pen">画笔</button>
+        <button type="button" data-tool="mosaic">马赛克</button>
+      </div>
+      <div class="annotate-colors" role="group" aria-label="线条颜色">
+        <button type="button" data-color="#e5484d" class="active" style="--swatch:#e5484d" aria-label="红色"></button>
+        <button type="button" data-color="#f76b15" style="--swatch:#f76b15" aria-label="橙色"></button>
+        <button type="button" data-color="#f5d90a" style="--swatch:#f5d90a" aria-label="黄色"></button>
+        <button type="button" data-color="#30a46c" style="--swatch:#30a46c" aria-label="绿色"></button>
+        <button type="button" data-color="#2563eb" style="--swatch:#2563eb" aria-label="蓝色"></button>
+        <button type="button" data-color="#111111" style="--swatch:#111111" aria-label="黑色"></button>
+        <button type="button" data-color="#ffffff" style="--swatch:#ffffff" aria-label="白色"></button>
+        <label class="annotate-custom" title="自定义颜色">
+          <input id="annotateColor" type="color" value="#e5484d">
+        </label>
+      </div>
+      <label class="annotate-width">粗细
+        <select id="annotateWidth">
+          <option value="2">细</option>
+          <option value="4" selected>中</option>
+          <option value="7">粗</option>
+        </select>
+      </label>
+    </div>
+    <div id="annotateStage" class="annotate-stage">
+      <canvas id="annotateCanvas"></canvas>
+    </div>
+    <div class="annotate-foot">
+      <button id="annotateUndo" class="ghost" type="button">撤销</button>
+      <button id="annotateClear" class="ghost" type="button">清空</button>
+      <span class="spacer"></span>
+      <span class="tip annotate-hint">拖拽绘制 · Esc 取消</span>
+      <button id="annotateCancel" class="ghost" type="button">取消</button>
+      <button id="annotateConfirm" class="primary" type="button">插入截图</button>
+    </div>
+  </dialog>
+
+  <script src="../config.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

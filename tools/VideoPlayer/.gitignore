@@ -1,0 +1,16 @@
+# server
+src/VideoPlayer/bin/
+src/VideoPlayer/obj/
+src/VideoPlayer/bin/Debug/net6.0/
+src/VideoPlayer/bin/Release/net6.0/
+src/VideoPlayer/bin/Release/net6.0/publish/
+src/VideoPlayer/bin/Release/net6.0/publish/wwwroot/
+/artifacts/
+
+# tools / OS
+.DS_Store
+Thumbs.db
+*.log
+
+# WorkBuddy 本地工作数据（工作日志等，不入库）
+.workbuddy/

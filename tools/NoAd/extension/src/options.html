@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CleanView 设置</title>
+  <link rel="stylesheet" href="popup.css" />
+  <style>
+    body { width: auto; max-width: 720px; margin: 24px auto; padding: 0 20px 40px; }
+    h2 { font-size: 15px; margin: 26px 0 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+    .hd { padding: 0 0 14px; }
+    .row { display: flex; align-items: center; gap: 10px; margin: 10px 0; flex-wrap: wrap; }
+    .row label { min-width: 96px; color: var(--sub); font-size: 12px; }
+    input[type="text"] {
+      flex: 1; min-width: 240px; padding: 7px 9px; border: 1px solid var(--line);
+      border-radius: 6px; font-size: 13px; color: var(--fg);
+    }
+    button {
+      padding: 7px 12px; border: 1px solid var(--line); border-radius: 6px;
+      background: #fff; color: var(--fg); cursor: pointer; font-size: 12px;
+    }
+    button:hover { background: #f7f8fa; }
+    button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    ul { list-style: none; padding: 0; margin: 8px 0; }
+    li {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 10px; margin-bottom: 5px; background: #f7f8fa;
+      border-radius: 6px; font-size: 12px;
+    }
+    .desc { font-size: 12px; color: var(--sub); line-height: 1.6; margin: 6px 0 0; }
+    .banner {
+      display: none; padding: 14px 16px; margin-bottom: 20px;
+      background: var(--accent-soft); border: 1px solid #c7d9ff; border-radius: 8px;
+    }
+    .banner h3 { margin: 0 0 8px; font-size: 14px; }
+    .banner .row { margin-top: 12px; }
+    .status { font-size: 12px; color: var(--sub); min-height: 18px; margin-top: 8px; }
+    .inline-switch { display: flex; align-items: center; gap: 8px; }
+  </style>
+</head>
+<body>
+
+  <!-- FR-06 首启告知：明示统计内容与关闭方式 -->
+  <div class="banner" id="welcomeBanner">
+    <h3>关于匿名效果统计</h3>
+    <p class="desc">
+      CleanView 默认开启匿名统计，仅上报<strong>聚合、去标识化</strong>的数据：
+      当日拦截总数、被拦域名计数（不含完整网页地址）、规则命中占比、随机设备标识与扩展版本。
+      我们<strong>不收集</strong>您浏览的网址、页面内容、搜索词或任何个人信息。
+    </p>
+    <p class="desc">您可以随时在下方关闭统计，关闭后本扩展不会发送任何网络请求。</p>
+    <div class="row">
+      <button id="welcomeKeep">保持开启</button>
+      <button id="welcomeDisable">关闭匿名统计</button>
+    </div>
+  </div>
+
+  <header class="hd">
+    <div class="brand">
+      <img src="../icons/icon128.png" class="logo" alt="CleanView" />
+      <h1>CleanView 设置</h1>
+    </div>
+  </header>
+
+  <h2>通用</h2>
+  <div class="row">
+    <div class="inline-switch">
+      <label class="switch" title="全局拦截开关">
+        <input type="checkbox" id="globalToggle" /><span class="slider"></span>
+      </label>
+      <span>全局拦截</span>
+    </div>
+  </div>
+  <p class="desc">关闭后静态规则集停用，所有站点恢复正常加载。</p>
+
+  <h2>站点白名单</h2>
+  <div class="row">
+    <input type="text" id="domainInput" placeholder="输入域名，如 example.com" />
+    <button id="addDomain">添加</button>
+  </div>
+  <ul id="domainList"></ul>
+  <p class="desc">白名单中的域名（含子域）不执行拦截与元素隐藏。</p>
+
+  <h2>规则订阅</h2>
+  <div class="row">
+    <label for="rulesUrl">规则地址</label>
+    <input type="text" id="rulesUrl" placeholder="https://…/dnr-rules.json（留空则不拉取）" />
+    <button id="saveRulesUrl">保存</button>
+    <button id="updateRules">立即更新</button>
+  </div>
+  <p class="desc">
+    远程文件须为已转换好的 DNR 规则数组（≤ 5000 条）。校验失败或拉取失败时保留现有规则。
+    完整规则列表（十万条级）需预编译进扩展包随发版更新，见 README「工程坑 3」。
+  </p>
+
+  <h2>隐私</h2>
+  <div class="row">
+    <div class="inline-switch">
+      <label class="switch" title="匿名统计开关">
+        <input type="checkbox" id="statsToggle" /><span class="slider"></span>
+      </label>
+      <span>匿名效果统计</span>
+    </div>
+  </div>
+  <div class="row">
+    <button id="resetId">重置匿名标识</button>
+    <button id="openPolicy">查看隐私政策</button>
+  </div>
+  <div class="status" id="status"></div>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+! ============================================================
+! CleanView 本地自定义规则（用户可自由编辑，入库、可版本化）
+! ------------------------------------------------------------
+! 这个文件就是你「手动新增 / 修改规则」的地方。
+! 支持标准 Adblock Plus / filter 语法（与上游规则源同一套语法），
+! 由 tools/build-rules.js 编译进独立的 ruleset_custom.json。
+!
+! 优先级规则（重要）：
+!   · 自定义规则整体优先级高于上游规则集（编译时 +100），
+!     即你在这里写的规则「说了算」，不会被上游覆盖。
+!   · 自定义例外（@@ 开头）优先级最高，可用于放行被误杀的站点/资源。
+!
+! 编译方式（改完保存后执行其一）：
+!   npm run build:custom        # 仅编译自定义规则
+!   npm run build:full          # 重新编译上游 + 自定义（推荐，保持两边一致）
+!
+! 改完无需重启浏览器：在扩展管理页点「刷新」(Reload) 即可。
+! ============================================================
+[Adblock Plus 2.0]
+
+! ---- 1. 拦截某个上游没拦到的广告域名（最常用）----
+! 语法：||域名^  表示拦截该域名及其所有子域的请求
+! 例：拦截某自托管广告域（请替换成你实际要拦的域名）
+! ||ads.my-annoying-site.com^
+
+! ---- 2. 限定资源类型的拦截 ----
+! 例：只拦某域的图片与脚本
+! ||tracker.example.net^$image,script,third-party
+
+! ---- 3. 放行（白名单例外）被误杀的正常资源 ----
+! 语法：@@ 开头。优先级最高，可抵消上游/本文件的拦截。
+! 例：放行某站点的统计脚本（避免该站功能异常）
+! @@||analytics.important-site.com^$script
+
+! ---- 4. 整站放行（站点级例外）----
+! 例：某站点误伤严重，整站不拦
+! @@||friend-site.com^$document
+
+! ---- 5. 元素隐藏（Cosmetic）：隐藏页面上的广告容器 ----
+! 语法：##选择器  或  域名##选择器
+! 例：隐藏某个具体的广告 div
+! ##.some-ad-banner
+! example.com##.sponsored-section
+
+! ---- 6. 排除某站的元素隐藏 ----
+! 例：在别的站点隐藏，但在 shop.com 不隐藏
+! ~shop.com##.promo-sidebar
+
+! ---- 7. 正则拦截（慎用，成本高）----
+! /regex/$options
+! /^https?:\/\/ad[0-9]+\.example\.net\//$script
+
+! ============================================================
+! 下面是「安全」的默认占位示例（已注释，不生效）。
+! 取消对应行前的 "!" 并替换域名即可启用。
+! ============================================================
+! ||doubleclick.net^
+! ##.ad-container
+
+! ============================================================
+! 8. MSN 信息流原生广告 / 赞助内容（实测遗漏项，2026-11-04 补充并修正）
+! ------------------------------------------------------------
+! 背景：MSN 把「赞助内容」横幅（横向卡片行，俗称 stripe）放进页面，
+! 且常在 load 事件之后才通过 fetch 注入。旧版规则用程序化 :has-text 只跑
+! 一次，永远漏掉延迟注入的卡片。修正方案：
+!   · 主规则用纯 CSS :has()（注入所有 root，CSS 是"活的"，新出现的卡片
+!     自动命中）；
+!   · 文字标签兜底 :has-text(赞助内容)（不依赖具体 class 命名）；
+!   · content.js 新增 MutationObserver，DOM 变化时重新遍历 Shadow DOM
+!     并重跑程序化规则，覆盖延迟注入。
+! 来源：uBO uAssets #22330 / AdGuard #86127 社区已验证选择器。
+! 若发现误伤正常内容，删除对应行即可。
+!
+! 8a. 社区已验证的赞助卡片行容器（纯 CSS :has()，命中即隐藏整条 stripe）
+msn.cn##.me-stripe-tile-content.me-stripe-compact:has(> .ad-container-skyscraper, .ad-container, .vd-ad, cs-native-ad-card-no-hover, display-ads, .display-ad-container, .display-ads-container, .views-right-rail-top-display, #entry-point-hp-wc-banner, .me-stripe-title-subtitle, #displayAdCard, shopping-sd-card)
+!
+! 8b. 兜底：该卡片行只要包含「赞助内容」文字即隐藏（不依赖广告 class 命名）
+msn.cn##.me-stripe-tile-content.me-stripe-compact:has-text(赞助内容)
+msn.cn##[class*="stripe"]:has-text(赞助内容)
+!
+! 8c. 直接广告容器（若 8a 因改版未命中时的补充）
+msn.cn##.intra-article-ad
+msn.cn##views-native-ad
+msn.cn##msft-article-card:not(.contentCard)
+msn.cn##shopping-sd-card
+msn.cn##.ad-container
+msn.cn##.vd-ad
+msn.cn##cs-native-ad-card-no-hover
+msn.cn##[class*="display-ads"]
+!
+! 8d. 单卡片「广告」角标兜底（仅隐藏 sponsor 卡片行内的卡片，避免过度误杀）
+msn.cn##[class*="stripe"] [class*="card"]:has-text(广告)
+msn.cn##[class*="stripe"] [class*="tile"]:has-text(广告)

@@ -1,0 +1,53 @@
+<Window x:Class="WorkLogTool.AddWorkPlanDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="添加工作计划" Width="500" Height="850"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow"
+        ResizeMode="NoResize">
+    <StackPanel Margin="20">
+        <TextBlock Text="日历:" Margin="0 10 0 5"/>
+        <Calendar x:Name="Calendar" Margin="0 0 0 10" SelectedDate="{x:Static sys:DateTime.Now}"/>
+
+        <TextBlock Text="工作内容:" Margin="0 10 0 5"/>
+        <TextBox x:Name="ContentTextBox" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Margin="0 0 0 10"/>
+
+        <TextBlock Text="预计耗时(小时):" Margin="0 10 0 5"/>
+        <TextBox x:Name="HoursTextBox" Text="0" Margin="0 0 0 10"/>
+
+        <TextBlock Text="预计成本:" Margin="0 10 0 5"/>
+        <TextBox x:Name="CostTextBox" Text="0" Margin="0 0 0 10"/>
+
+        <TextBlock Text="工作状态" Margin="0 10 0 5"/>
+        <ToggleButton x:Name="StatusToggleButton" Content="待办" Width="80" Margin="0 0 0 10" Click="StatusToggleButton_Click"/>
+
+        <TextBlock Text="工作进度:" Margin="0 10 0 5"/>
+        <ComboBox x:Name="ProgressComboBox" Margin="0 0 0 10" SelectedIndex="0">
+            <ComboBox.Items>
+                <sys:Int32>20</sys:Int32>
+                <sys:Int32>40</sys:Int32>
+                <sys:Int32>60</sys:Int32>
+                <sys:Int32>80</sys:Int32>
+                <sys:Int32>100</sys:Int32>
+            </ComboBox.Items>
+        </ComboBox>
+
+        <TextBlock Text="开始时间:" Margin="0 10 0 5"/>
+        <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+            <DatePicker x:Name="StartDatePicker" Width="150" Margin="0 0 10 0"/>
+            <TextBox x:Name="StartTimeTextBox" Width="100"/>
+        </StackPanel>
+
+        <TextBlock Text="完成时间:" Margin="0 10 0 5"/>
+        <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+            <DatePicker x:Name="EndDatePicker" Width="150" Margin="0 0 10 0"/>
+            <TextBox x:Name="EndTimeTextBox" Width="100"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 20 0 0">
+            <Button x:Name="CancelButton" Content="关闭" Margin="0 0 10 0" Width="80" Click="CancelButton_Click"/>
+            <Button x:Name="AddButton" Content="确认新增" Width="100" Click="AddButton_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

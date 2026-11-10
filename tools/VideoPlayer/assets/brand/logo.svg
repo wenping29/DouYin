@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="VideoPlayer">
+  <title>VideoPlayer</title>
+  <defs>
+    <linearGradient id="vp-bg" x1="40" y1="40" x2="984" y2="984" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1B202E"/>
+      <stop offset="0.52" stop-color="#0D101A"/>
+      <stop offset="1" stop-color="#05070D"/>
+    </linearGradient>
+    <radialGradient id="vp-glow-cyan" cx="320" cy="352" r="500" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22D3EE" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vp-glow-violet" cx="748" cy="792" r="560" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8B5CF6" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="vp-sheen" x1="40" y1="40" x2="984" y2="984" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.28" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.4" stop-color="#FFFFFF" stop-opacity="0.06"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.03"/>
+      <stop offset="0.62" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="vp-play" x1="345" y1="306" x2="700" y2="710" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2BE7F5"/>
+      <stop offset="0.55" stop-color="#6E5EFF"/>
+      <stop offset="1" stop-color="#BA5CFF"/>
+    </linearGradient>
+    <linearGradient id="vp-hi" x1="0" y1="306" x2="0" y2="718" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="vp-neon" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="34"/>
+    </filter>
+    <clipPath id="vp-plate">
+      <rect x="40" y="40" width="944" height="944" rx="214"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#vp-plate)">
+    <rect x="40" y="40" width="944" height="944" fill="url(#vp-bg)"/>
+    <rect x="40" y="40" width="944" height="944" fill="url(#vp-glow-cyan)" style="mix-blend-mode:screen"/>
+    <rect x="40" y="40" width="944" height="944" fill="url(#vp-glow-violet)" style="mix-blend-mode:screen"/>
+    <rect x="40" y="40" width="944" height="944" fill="url(#vp-sheen)"/>
+  </g>
+
+  <path d="M 331 406 L 331 618 Q 331 718 417.91 668.54 L 606.09 561.46 Q 693 512 606.09 462.54 L 417.91 355.46 Q 331 306 331 406 Z" fill="url(#vp-play)" filter="url(#vp-neon)" opacity="0.55"/>
+  <path d="M 331 406 L 331 618 Q 331 718 417.91 668.54 L 606.09 561.46 Q 693 512 606.09 462.54 L 417.91 355.46 Q 331 306 331 406 Z" fill="url(#vp-play)"/>
+  <path d="M 331 406 L 331 618 Q 331 718 417.91 668.54 L 606.09 561.46 Q 693 512 606.09 462.54 L 417.91 355.46 Q 331 306 331 406 Z" fill="url(#vp-hi)"/>
+
+  <rect x="41" y="41"
+        width="942" height="942"
+        rx="213" fill="none" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="2"/>
+</svg>

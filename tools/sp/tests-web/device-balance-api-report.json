@@ -1,0 +1,68 @@
+{
+  "checks": {
+    "codeSent": true,
+    "registerGift": true,
+    "deviceShowsBoundUser": true,
+    "deviceHasNoCreditFields": true,
+    "userAccountHiddenFromDevices": true,
+    "memberHasCreditFields": true,
+    "summaryIsUserScoped": true,
+    "grantAppliedToUser": true,
+    "tokenSeesUserBalance": true,
+    "flowUsesUserAccount": true,
+    "manualAdjustNotConsumption": true,
+    "setBalanceWorks": true,
+    "summaryFollowsUserBalance": true,
+    "logoutUnbindsDevice": true,
+    "userKeepsBalanceAfterLogout": true,
+    "opsRoleCanListUsers": true,
+    "opsRoleCanAdjust": true,
+    "readonlyRoleCanListUsers": true,
+    "readonlyRoleCannotAdjust": true
+  },
+  "sample": {
+    "deviceRow": {
+      "deviceId": "usercred-1793791494839",
+      "label": "",
+      "isBlocked": false,
+      "loggedIn": true,
+      "accountEmail": "usercred-1793791494839@example.com",
+      "createdAt": "2026-11-04T11:24:55.0446636Z",
+      "lastUsedAt": "2026-11-04T11:24:55.0446636Z"
+    },
+    "member": {
+      "id": 1,
+      "email": "usercred-1793791494839@example.com",
+      "displayName": "积分用户测试",
+      "isBlocked": false,
+      "balance": 1000,
+      "spent": 0,
+      "calls": 0,
+      "accountDeviceId": "ufba54d3f9393484096ae0ff97e0ee79f",
+      "deviceCount": 1,
+      "createdAt": "2026-11-04T11:24:55.0446636Z",
+      "lastLoginAt": "2026-11-04T11:24:55.0446636Z"
+    },
+    "summaryBefore": {
+      "users": 1,
+      "totalBalance": 1000,
+      "blocked": 0,
+      "spent": 0,
+      "calls": 0
+    },
+    "grant": {
+      "deviceId": "ufba54d3f9393484096ae0ff97e0ee79f",
+      "label": "usercred-1793791494839@example.com",
+      "delta": 500,
+      "balance": 1500
+    },
+    "summaryAfterSet": {
+      "users": 1,
+      "totalBalance": 800,
+      "blocked": 0,
+      "spent": 700,
+      "calls": 1
+    }
+  },
+  "allPassed": true
+}

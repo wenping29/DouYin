@@ -1,0 +1,41 @@
+{
+  "comment": "规则源清单。fetch-rules.js 按此下载并拼接，再交给 build-rules.js 编译为 MV3 DNR 规则。每个源都受各自许可证约束，见 license 字段。",
+  "defaultMaxStatic": 150000,
+  "defaultMaxCosmetic": 8000,
+  "customFilterPath": "filters/custom.txt",
+  "commentCustom": "本地用户自定义规则文件（ABP 语法，可自由编辑、入库）。fetch-rules.js 会把它单独编译为独立且优先级更高的 ruleset_custom.json，详见 NOTICE 与 README 的「本地自定义规则」一节。",
+  "sources": [
+    {
+      "name": "easylist",
+      "url": "https://easylist.to/easylist/easylist.txt",
+      "enabled": true,
+      "license": "EasyList License（基于 CC BY-NonCommercial-NoDerivatives 4.0，需署名；商业用途须获书面许可；禁止以 EasyList 名义发布修改版）",
+      "licenseUrl": "https://easylist.to/pages/licence.html",
+      "note": "国际通用广告/跟踪规则，覆盖 Google、Criteo、Taboola 等。"
+    },
+    {
+      "name": "easyprivacy",
+      "url": "https://easylist.to/easylist/easyprivacy.txt",
+      "enabled": true,
+      "license": "EasyList License（同 easylist，需署名；商业用途须获书面许可）",
+      "licenseUrl": "https://easylist.to/pages/licence.html",
+      "note": "隐私/跟踪器屏蔽，不含广告展示规则。可与 easylist 叠加。"
+    },
+    {
+      "name": "easylist-china",
+      "url": "https://easylist-downloads.adblockplus.org/easylistchina.txt",
+      "enabled": true,
+      "license": "EasyList License（同 easylist，需署名；商业用途须获书面许可）",
+      "licenseUrl": "https://easylist.to/pages/licence.html",
+      "note": "补充国内广告网络：百度、腾讯、字节、新浪、网易、阿里等。本扩展前期 62% 覆盖率缺口主要由此填补。"
+    },
+    {
+      "name": "adguard-chinese",
+      "url": "https://filters.adtidy.org/extension/chromium/filters/224.txt",
+      "enabled": false,
+      "license": "AdGuard 过滤规则许可证（允许再分发，须保留版权声明并注明来源；详见 licenseUrl）",
+      "licenseUrl": "https://adguard.com/en/license.html",
+      "note": "AdGuard 中文过滤，许可证比 EasyList 宽松（允许商业使用，须署名）。如拟商业化可改用此源替代 EasyList 系。"
+    }
+  ]
+}

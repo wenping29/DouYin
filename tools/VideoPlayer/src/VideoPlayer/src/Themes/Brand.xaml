@@ -1,0 +1,96 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <!--
+        VideoPlayer 品牌资源 · Neon Minimal
+        色板 / 字体 / 渐变 / 图标几何。来源：assets/brand（generate_logo.py 同步生成）。
+
+        合并：App.xaml（品牌令牌与现有控件样式分离）
+            <Application.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="Themes/Brand.xaml" />
+                        <ResourceDictionary Source="Themes/DarkTheme.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+            </Application.Resources>
+        BoolToVis 转换器由 App.xaml 单独注册。
+
+        用法：
+            <Path Style="{StaticResource BrandMarkStyle}" Width="32" Height="32" />
+            <Border Background="{StaticResource BrandPanelBrush}" CornerRadius="{StaticResource BrandRadiusMedium}" />
+    -->
+
+    <!-- ============================ 色板 ============================ -->
+    <Color x:Key="BrandCyanColor">#FF2BE7F5</Color>
+    <Color x:Key="BrandIndigoColor">#FF6E5EFF</Color>
+    <Color x:Key="BrandVioletColor">#FFBA5CFF</Color>
+    <Color x:Key="BrandInkColor">#FF0C0F18</Color>
+    <Color x:Key="BrandSlateColor">#FF191E2B</Color>
+    <Color x:Key="BrandElevatedColor">#FF232A3C</Color>
+    <Color x:Key="BrandDividerColor">#FF2A3247</Color>
+    <Color x:Key="BrandTextPrimaryColor">#FFE9EDF6</Color>
+    <Color x:Key="BrandTextSecondaryColor">#FF93A1BD</Color>
+    <Color x:Key="BrandTextTertiaryColor">#FF5F6E8C</Color>
+
+    <SolidColorBrush x:Key="BrandCyanBrush" Color="{StaticResource BrandCyanColor}" />
+    <SolidColorBrush x:Key="BrandIndigoBrush" Color="{StaticResource BrandIndigoColor}" />
+    <SolidColorBrush x:Key="BrandVioletBrush" Color="{StaticResource BrandVioletColor}" />
+
+    <!-- 应用底色：窗口背景 -->
+    <SolidColorBrush x:Key="BrandSurfaceBrush" Color="{StaticResource BrandInkColor}" />
+    <!-- 面板 / 卡片 -->
+    <SolidColorBrush x:Key="BrandPanelBrush" Color="{StaticResource BrandSlateColor}" />
+    <!-- 悬浮 / 弹层 -->
+    <SolidColorBrush x:Key="BrandElevatedBrush" Color="{StaticResource BrandElevatedColor}" />
+    <SolidColorBrush x:Key="BrandDividerBrush" Color="{StaticResource BrandDividerColor}" />
+
+    <SolidColorBrush x:Key="BrandTextPrimaryBrush" Color="{StaticResource BrandTextPrimaryColor}" />
+    <SolidColorBrush x:Key="BrandTextSecondaryBrush" Color="{StaticResource BrandTextSecondaryColor}" />
+    <SolidColorBrush x:Key="BrandTextTertiaryBrush" Color="{StaticResource BrandTextTertiaryColor}" />
+
+    <!-- 主强调色：青 → 靛 → 紫（与图标三角形同一渐变） -->
+    <LinearGradientBrush x:Key="BrandAccentBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="{StaticResource BrandCyanColor}" Offset="0" />
+        <GradientStop Color="{StaticResource BrandIndigoColor}" Offset="0.55" />
+        <GradientStop Color="{StaticResource BrandVioletColor}" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- 纯色强调（用于文字、描边等不能渐变的位置） -->
+    <SolidColorBrush x:Key="BrandAccentSolidBrush" Color="{StaticResource BrandIndigoColor}" />
+
+    <!-- ============================ 字体 ============================ -->
+    <FontFamily x:Key="BrandFontFamily">Segoe UI Variable Text, Segoe UI, Microsoft YaHei UI</FontFamily>
+    <FontFamily x:Key="BrandDisplayFontFamily">Segoe UI Variable Display, Segoe UI, Microsoft YaHei UI</FontFamily>
+
+    <sys:Double x:Key="BrandFontSizeCaption">11</sys:Double>
+    <sys:Double x:Key="BrandFontSizeBody">13</sys:Double>
+    <sys:Double x:Key="BrandFontSizeSubtitle">15</sys:Double>
+    <sys:Double x:Key="BrandFontSizeTitle">20</sys:Double>
+    <sys:Double x:Key="BrandFontSizeDisplay">28</sys:Double>
+
+    <!-- ============================ 圆角 ============================ -->
+    <CornerRadius x:Key="BrandRadiusSmall">6</CornerRadius>
+    <CornerRadius x:Key="BrandRadiusMedium">10</CornerRadius>
+    <CornerRadius x:Key="BrandRadiusLarge">16</CornerRadius>
+
+    <!-- ========================= 图标几何 ========================= -->
+    <!-- 1024×1024 设计坐标下的播放三角（圆角），配合 Stretch="Uniform" 使用。
+         下面这一段由 assets/brand/tools/generate_logo.py 自动同步，请勿手改。 -->
+    <!-- mark:begin -->
+    <sys:String x:Key="BrandMarkPathData">M 331 406 L 331 618 Q 331 718 417.91 668.54 L 606.09 561.46 Q 693 512 606.09 462.54 L 417.91 355.46 Q 331 306 331 406 Z</sys:String>
+    <!-- mark:end -->
+
+    <Style x:Key="BrandMarkStyle" TargetType="Path">
+        <Setter Property="Data" Value="{StaticResource BrandMarkPathData}" />
+        <Setter Property="Stretch" Value="Uniform" />
+        <Setter Property="Fill" Value="{StaticResource BrandAccentBrush}" />
+    </Style>
+
+    <!-- 单色版：默认浅色，按需覆盖 Fill -->
+    <Style x:Key="BrandMarkMonoStyle" TargetType="Path" BasedOn="{StaticResource BrandMarkStyle}">
+        <Setter Property="Fill" Value="{StaticResource BrandTextPrimaryBrush}" />
+    </Style>
+
+</ResourceDictionary>

@@ -1,0 +1,44 @@
+CleanView 广告拦截扩展 — 上游规则源许可证与署名声明
+============================================================
+
+本扩展的广告拦截规则**不在仓库中直接包含完整内容**，而是在构建期由
+`tools/fetch-rules.js` 从下列公开规则源下载并编译（生成物已 .gitignore 忽略）。
+以下为各源许可证摘要与署名要求，**发布前必须随包提供本文件**。
+
+------------------------------------------------------------
+1. EasyList / EasyPrivacy / EasyList China
+------------------------------------------------------------
+许可证：EasyList License（基于 Creative Commons Attribution-NonCommercial-
+         NoDerivatives 4.0 International；具体以 https://easylist.to/pages/licence.html 为准）
+源地址：
+  - https://easylist.to/easylist/easylist.txt
+  - https://easylist.to/easylist/easyprivacy.txt
+  - https://easylist-downloads.adblockplus.org/easylistchina.txt
+许可要点（务必遵守）：
+  · 须署名并注明来源（EasyList 项目）。
+  · **默认禁止商业用途**（commercial use），须获得 EasyList 维护者书面许可。
+  · 禁止以 "EasyList" 名义发布修改版（NoDerivatives）。
+⚠️ 商业化红线：本扩展若转为收费/商业化，**不可继续默认使用 EasyList 系**，
+   须改用许可证更宽松的源（见第 3 条 AdGuard）或自建规则。
+
+------------------------------------------------------------
+2. AdGuard 中文过滤（Filter 224，备选源，默认 disabled）
+------------------------------------------------------------
+许可证：AdGuard 过滤规则许可证（允许再分发与商业使用，须保留版权声明并注明来源；
+        具体以 https://adguard.com/en/license.html 为准）
+源地址：https://filters.adtidy.org/extension/chromium/filters/224.txt
+用途：当本扩展计划商业化时，将 rules-sources.json 中 adguard-chinese 置为
+      enabled、并将 EasyList 系列置为 disabled 即可切换，且仍须保留本署名。
+
+------------------------------------------------------------
+3. 内置示例规则与兜底选择器（filters/sample-filters.txt、src/content.js）
+------------------------------------------------------------
+为本项目原创整理，不受上述第三方许可证约束，可自由使用。
+
+============================================================
+编译产物署名要求小结
+------------------------------------------------------------
+- 若发布版本包含上述任一规则源，必须将本 NOTICE 文件一并打包（可在扩展
+  "关于"页或选项页链接到本文件）。
+- 商业化前：确认所用源的许可证是否允许商业使用；EasyList 系默认不允许。
+- 本声明不构成法律意见，正式发布前请由法务确认。

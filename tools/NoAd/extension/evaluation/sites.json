@@ -1,0 +1,1836 @@
+{
+  "meta": {
+    "generatedAt": "2026-11-04",
+    "description": "50 站点广告请求评测集（构造样本，非真实抓包）",
+    "totalSites": 57,
+    "totalSamples": 171,
+    "coverageMetric": "规则命中 block 的样本数 / 总样本数（静态，不含 cosmetic 层）",
+    "note": "expected 均为 block，代表理想拦截；未被规则命中的即漏拦(leak)。"
+  },
+  "sites": [
+    {
+      "id": "s01",
+      "name": "新浪新闻",
+      "url": "https://news.sina.com.cn",
+      "category": "新闻",
+      "samples": [
+        {
+          "url": "https://pagead2.googlesyndication.com/delivery/9171/ad?site=news.sina.com.cn&slot=0",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "news.sina.com.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://scorecardresearch.com/delivery/1331/ad?site=news.sina.com.cn&slot=1",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "news.sina.com.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://tanx.com/delivery/4736/ad?site=news.sina.com.cn&slot=2",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "first",
+          "initiator": "news.sina.com.cn",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s02",
+      "name": "搜狐新闻",
+      "url": "https://news.sohu.com",
+      "category": "新闻",
+      "samples": [
+        {
+          "url": "https://googleadservices.com/delivery/2206/ad?site=news.sohu.com&slot=0",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "news.sohu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://adnxs.com/delivery/8494/ad?site=news.sohu.com&slot=1",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "news.sohu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://sax.sina.com.cn/delivery/7154/ad?site=news.sohu.com&slot=2",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "news.sohu.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s03",
+      "name": "网易新闻",
+      "url": "https://news.163.com",
+      "category": "新闻",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/9966/ad?site=news.163.com&slot=0",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "news.163.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://rubiconproject.com/delivery/8720/ad?site=news.163.com&slot=1",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "news.163.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://ad.qt.qq.com/delivery/4920/ad?site=news.163.com&slot=2",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "news.163.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s04",
+      "name": "腾讯新闻",
+      "url": "https://news.qq.com",
+      "category": "新闻",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/4485/ad?site=news.qq.com&slot=0",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "news.qq.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://outbrain.com/delivery/2820/ad?site=news.qq.com&slot=1",
+          "type": "信息流",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "news.qq.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://ad.toutiao.com/delivery/6235/ad?site=news.qq.com&slot=2",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "news.qq.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s05",
+      "name": "凤凰网",
+      "url": "https://www.ifeng.com",
+      "category": "新闻",
+      "samples": [
+        {
+          "url": "https://adservice.google.com/delivery/9083/ad?site=www.ifeng.com&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.ifeng.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://rubiconproject.com/delivery/7317/ad?site=www.ifeng.com&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.ifeng.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://sax.sina.com.cn/delivery/9712/ad?site=www.ifeng.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.ifeng.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s06",
+      "name": "澎湃新闻",
+      "url": "https://www.thepaper.cn",
+      "category": "新闻",
+      "samples": [
+        {
+          "url": "https://googleadservices.com/delivery/7818/ad?site=www.thepaper.cn&slot=0",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.thepaper.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://scorecardresearch.com/delivery/4458/ad?site=www.thepaper.cn&slot=1",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.thepaper.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://ad.qt.qq.com/delivery/3512/ad?site=www.thepaper.cn&slot=2",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.thepaper.cn",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s07",
+      "name": "环球网",
+      "url": "https://www.huanqiu.com",
+      "category": "新闻",
+      "samples": [
+        {
+          "url": "https://adservice.google.com/delivery/9726/ad?site=www.huanqiu.com&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.huanqiu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://taboola.com/delivery/6169/ad?site=www.huanqiu.com&slot=1",
+          "type": "展示",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "www.huanqiu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.baidu.com/delivery/9064/ad?site=www.huanqiu.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.huanqiu.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s08",
+      "name": "人民网",
+      "url": "https://www.people.com.cn",
+      "category": "新闻",
+      "samples": [
+        {
+          "url": "https://adservice.google.com/delivery/6758/ad?site=www.people.com.cn&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.people.com.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://adnxs.com/delivery/9091/ad?site=www.people.com.cn&slot=1",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.people.com.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://sax.sina.com.cn/delivery/7241/ad?site=www.people.com.cn&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.people.com.cn",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s09",
+      "name": "新华网",
+      "url": "https://www.xinhuanet.com",
+      "category": "新闻",
+      "samples": [
+        {
+          "url": "https://googleadservices.com/delivery/9517/ad?site=www.xinhuanet.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.xinhuanet.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://taboola.com/delivery/1203/ad?site=www.xinhuanet.com&slot=1",
+          "type": "展示",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "www.xinhuanet.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://iad.gtimg.com/delivery/9634/ad?site=www.xinhuanet.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.xinhuanet.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s10",
+      "name": "财新网",
+      "url": "https://www.caixin.com",
+      "category": "新闻",
+      "samples": [
+        {
+          "url": "https://googleadservices.com/delivery/6078/ad?site=www.caixin.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.caixin.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://taboola.com/delivery/8167/ad?site=www.caixin.com&slot=1",
+          "type": "展示",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "www.caixin.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://sax.sina.com.cn/delivery/1654/ad?site=www.caixin.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.caixin.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s11",
+      "name": "哔哩哔哩",
+      "url": "https://www.bilibili.com",
+      "category": "视频",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/8111/ad?site=www.bilibili.com&slot=0",
+          "type": "贴片",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.bilibili.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://adsrvr.org/delivery/3296/ad?site=www.bilibili.com&slot=1",
+          "type": "贴片",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.bilibili.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://tanx.com/delivery/9792/ad?site=www.bilibili.com&slot=2",
+          "type": "贴片",
+          "resourceType": "script",
+          "party": "first",
+          "initiator": "www.bilibili.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s12",
+      "name": "优酷",
+      "url": "https://www.youku.com",
+      "category": "视频",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/7083/ad?site=www.youku.com&slot=0",
+          "type": "贴片",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.youku.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://outbrain.com/delivery/2039/ad?site=www.youku.com&slot=1",
+          "type": "贴片",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "www.youku.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://mimg.126.net/delivery/3721/ad?site=www.youku.com&slot=2",
+          "type": "贴片",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.youku.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s13",
+      "name": "爱奇艺",
+      "url": "https://www.iqiyi.com",
+      "category": "视频",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/7776/ad?site=www.iqiyi.com&slot=0",
+          "type": "贴片",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.iqiyi.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://scorecardresearch.com/delivery/4941/ad?site=www.iqiyi.com&slot=1",
+          "type": "贴片",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.iqiyi.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://ad.toutiao.com/delivery/8305/ad?site=www.iqiyi.com&slot=2",
+          "type": "贴片",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.iqiyi.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s14",
+      "name": "腾讯视频",
+      "url": "https://v.qq.com",
+      "category": "视频",
+      "samples": [
+        {
+          "url": "https://pagead2.googlesyndication.com/delivery/5792/ad?site=v.qq.com&slot=0",
+          "type": "贴片",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "v.qq.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://criteo.com/delivery/4618/ad?site=v.qq.com&slot=1",
+          "type": "贴片",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "v.qq.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://cpro.baidu.com/delivery/7237/ad?site=v.qq.com&slot=2",
+          "type": "贴片",
+          "resourceType": "script",
+          "party": "first",
+          "initiator": "v.qq.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s15",
+      "name": "芒果TV",
+      "url": "https://www.mgtv.com",
+      "category": "视频",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/9848/ad?site=www.mgtv.com&slot=0",
+          "type": "贴片",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.mgtv.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://adsrvr.org/delivery/7325/ad?site=www.mgtv.com&slot=1",
+          "type": "贴片",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.mgtv.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://mimg.126.net/delivery/2540/ad?site=www.mgtv.com&slot=2",
+          "type": "贴片",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.mgtv.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s16",
+      "name": "抖音",
+      "url": "https://www.douyin.com",
+      "category": "视频",
+      "samples": [
+        {
+          "url": "https://adservice.google.com/delivery/7684/ad?site=www.douyin.com&slot=0",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.douyin.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://outbrain.com/delivery/4300/ad?site=www.douyin.com&slot=1",
+          "type": "信息流",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "www.douyin.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://cpro.baidu.com/delivery/6106/ad?site=www.douyin.com&slot=2",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "first",
+          "initiator": "www.douyin.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s17",
+      "name": "快手",
+      "url": "https://www.kuaishou.com",
+      "category": "视频",
+      "samples": [
+        {
+          "url": "https://adservice.google.com/delivery/9876/ad?site=www.kuaishou.com&slot=0",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.kuaishou.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://taboola.com/delivery/4338/ad?site=www.kuaishou.com&slot=1",
+          "type": "信息流",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "www.kuaishou.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://ad.toutiao.com/delivery/6160/ad?site=www.kuaishou.com&slot=2",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.kuaishou.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s18",
+      "name": "微博",
+      "url": "https://weibo.com",
+      "category": "社交",
+      "samples": [
+        {
+          "url": "https://googleadservices.com/delivery/3728/ad?site=weibo.com&slot=0",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "weibo.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://adnxs.com/delivery/1023/ad?site=weibo.com&slot=1",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "weibo.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://cpro.baidu.com/delivery/5959/ad?site=weibo.com&slot=2",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "first",
+          "initiator": "weibo.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s19",
+      "name": "微信",
+      "url": "https://weixin.qq.com",
+      "category": "社交",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/2953/ad?site=weixin.qq.com&slot=0",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "weixin.qq.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://rubiconproject.com/delivery/7464/ad?site=weixin.qq.com&slot=1",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "weixin.qq.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://ad.qt.qq.com/delivery/5754/ad?site=weixin.qq.com&slot=2",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "weixin.qq.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s20",
+      "name": "QQ",
+      "url": "https://im.qq.com",
+      "category": "社交",
+      "samples": [
+        {
+          "url": "https://googletagservices.com/delivery/3233/ad?site=im.qq.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "im.qq.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://criteo.com/delivery/5320/ad?site=im.qq.com&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "im.qq.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.baidu.com/delivery/1084/ad?site=im.qq.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "im.qq.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s21",
+      "name": "知乎",
+      "url": "https://www.zhihu.com",
+      "category": "社交",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/8357/ad?site=www.zhihu.com&slot=0",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.zhihu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://outbrain.com/delivery/8617/ad?site=www.zhihu.com&slot=1",
+          "type": "信息流",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "www.zhihu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://sax.sina.com.cn/delivery/5313/ad?site=www.zhihu.com&slot=2",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.zhihu.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s22",
+      "name": "豆瓣",
+      "url": "https://www.douban.com",
+      "category": "社交",
+      "samples": [
+        {
+          "url": "https://googleadservices.com/delivery/8348/ad?site=www.douban.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.douban.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://criteo.com/delivery/7505/ad?site=www.douban.com&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.douban.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://cpro.baidu.com/delivery/5487/ad?site=www.douban.com&slot=2",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "first",
+          "initiator": "www.douban.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s23",
+      "name": "百度贴吧",
+      "url": "https://tieba.baidu.com",
+      "category": "社交",
+      "samples": [
+        {
+          "url": "https://pagead2.googlesyndication.com/delivery/2088/ad?site=tieba.baidu.com&slot=0",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "tieba.baidu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://outbrain.com/delivery/1420/ad?site=tieba.baidu.com&slot=1",
+          "type": "信息流",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "tieba.baidu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://m.alimama.com/delivery/5796/ad?site=tieba.baidu.com&slot=2",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "first",
+          "initiator": "tieba.baidu.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s24",
+      "name": "小红书",
+      "url": "https://www.xiaohongshu.com",
+      "category": "社交",
+      "samples": [
+        {
+          "url": "https://pagead2.googlesyndication.com/delivery/5298/ad?site=www.xiaohongshu.com&slot=0",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.xiaohongshu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://scorecardresearch.com/delivery/8541/ad?site=www.xiaohongshu.com&slot=1",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.xiaohongshu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://iad.gtimg.com/delivery/6723/ad?site=www.xiaohongshu.com&slot=2",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.xiaohongshu.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s25",
+      "name": "淘宝",
+      "url": "https://www.taobao.com",
+      "category": "电商",
+      "samples": [
+        {
+          "url": "https://pagead2.googlesyndication.com/delivery/1110/ad?site=www.taobao.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.taobao.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://taboola.com/delivery/6215/ad?site=www.taobao.com&slot=1",
+          "type": "展示",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "www.taobao.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.baidu.com/delivery/6222/ad?site=www.taobao.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.taobao.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s26",
+      "name": "京东",
+      "url": "https://www.jd.com",
+      "category": "电商",
+      "samples": [
+        {
+          "url": "https://googletagservices.com/delivery/4225/ad?site=www.jd.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.jd.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://adnxs.com/delivery/2579/ad?site=www.jd.com&slot=1",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.jd.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://iad.gtimg.com/delivery/4167/ad?site=www.jd.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.jd.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s27",
+      "name": "拼多多",
+      "url": "https://www.pinduoduo.com",
+      "category": "电商",
+      "samples": [
+        {
+          "url": "https://googletagservices.com/delivery/3551/ad?site=www.pinduoduo.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.pinduoduo.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://outbrain.com/delivery/4355/ad?site=www.pinduoduo.com&slot=1",
+          "type": "展示",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "www.pinduoduo.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.360.cn/delivery/2192/ad?site=www.pinduoduo.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.pinduoduo.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s28",
+      "name": "天猫",
+      "url": "https://www.tmall.com",
+      "category": "电商",
+      "samples": [
+        {
+          "url": "https://googleadservices.com/delivery/8213/ad?site=www.tmall.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.tmall.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://criteo.com/delivery/7772/ad?site=www.tmall.com&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.tmall.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://tanx.com/delivery/2533/ad?site=www.tmall.com&slot=2",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "first",
+          "initiator": "www.tmall.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s29",
+      "name": "苏宁",
+      "url": "https://www.suning.com",
+      "category": "电商",
+      "samples": [
+        {
+          "url": "https://adservice.google.com/delivery/7566/ad?site=www.suning.com&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.suning.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://scorecardresearch.com/delivery/4173/ad?site=www.suning.com&slot=1",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.suning.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://iad.gtimg.com/delivery/2104/ad?site=www.suning.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.suning.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s30",
+      "name": "唯品会",
+      "url": "https://www.vip.com",
+      "category": "电商",
+      "samples": [
+        {
+          "url": "https://pagead2.googlesyndication.com/delivery/5040/ad?site=www.vip.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.vip.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://criteo.com/delivery/1978/ad?site=www.vip.com&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.vip.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://mimg.126.net/delivery/9150/ad?site=www.vip.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.vip.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s31",
+      "name": "百度",
+      "url": "https://www.baidu.com",
+      "category": "搜索",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/4010/ad?site=www.baidu.com&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.baidu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://criteo.com/delivery/5122/ad?site=www.baidu.com&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.baidu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.baidu.com/delivery/6198/ad?site=www.baidu.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.baidu.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s32",
+      "name": "搜狗",
+      "url": "https://www.sogou.com",
+      "category": "搜索",
+      "samples": [
+        {
+          "url": "https://googletagservices.com/delivery/6664/ad?site=www.sogou.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.sogou.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pubmatic.com/delivery/3838/ad?site=www.sogou.com&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.sogou.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.baidu.com/delivery/1447/ad?site=www.sogou.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.sogou.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s33",
+      "name": "360搜索",
+      "url": "https://www.so.com",
+      "category": "搜索",
+      "samples": [
+        {
+          "url": "https://adservice.google.com/delivery/3461/ad?site=www.so.com&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.so.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://criteo.com/delivery/7102/ad?site=www.so.com&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.so.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.baidu.com/delivery/5303/ad?site=www.so.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.so.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s34",
+      "name": "必应",
+      "url": "https://www.bing.com",
+      "category": "搜索",
+      "samples": [
+        {
+          "url": "https://googleadservices.com/delivery/3715/ad?site=www.bing.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.bing.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://adnxs.com/delivery/5072/ad?site=www.bing.com&slot=1",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.bing.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.baidu.com/delivery/3907/ad?site=www.bing.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.bing.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s35",
+      "name": "hao123",
+      "url": "https://www.hao123.com",
+      "category": "门户",
+      "samples": [
+        {
+          "url": "https://googleadservices.com/delivery/6577/ad?site=www.hao123.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.hao123.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://adnxs.com/delivery/7499/ad?site=www.hao123.com&slot=1",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.hao123.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://mimg.126.net/delivery/1005/ad?site=www.hao123.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.hao123.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s36",
+      "name": "腾讯网",
+      "url": "https://www.qq.com",
+      "category": "门户",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/5082/ad?site=www.qq.com&slot=0",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.qq.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://taboola.com/delivery/5777/ad?site=www.qq.com&slot=1",
+          "type": "信息流",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "www.qq.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.360.cn/delivery/8620/ad?site=www.qq.com&slot=2",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.qq.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s37",
+      "name": "天涯",
+      "url": "https://www.tianya.cn",
+      "category": "论坛",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/7129/ad?site=www.tianya.cn&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.tianya.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://rubiconproject.com/delivery/5055/ad?site=www.tianya.cn&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.tianya.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://ad.toutiao.com/delivery/7047/ad?site=www.tianya.cn&slot=2",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.tianya.cn",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s38",
+      "name": "虎扑",
+      "url": "https://www.hupu.com",
+      "category": "论坛",
+      "samples": [
+        {
+          "url": "https://googleadservices.com/delivery/1561/ad?site=www.hupu.com&slot=0",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.hupu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pubmatic.com/delivery/5275/ad?site=www.hupu.com&slot=1",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.hupu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.360.cn/delivery/4410/ad?site=www.hupu.com&slot=2",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.hupu.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s39",
+      "name": "V2EX",
+      "url": "https://www.v2ex.com",
+      "category": "论坛",
+      "samples": [
+        {
+          "url": "https://pagead2.googlesyndication.com/delivery/4304/ad?site=www.v2ex.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.v2ex.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://adnxs.com/delivery/1908/ad?site=www.v2ex.com&slot=1",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.v2ex.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.baidu.com/delivery/2724/ad?site=www.v2ex.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.v2ex.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s40",
+      "name": "CSDN",
+      "url": "https://www.csdn.net",
+      "category": "科技",
+      "samples": [
+        {
+          "url": "https://pagead2.googlesyndication.com/delivery/8091/ad?site=www.csdn.net&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.csdn.net",
+          "expected": "block"
+        },
+        {
+          "url": "https://adsrvr.org/delivery/1917/ad?site=www.csdn.net&slot=1",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.csdn.net",
+          "expected": "block"
+        },
+        {
+          "url": "https://m.alimama.com/delivery/9943/ad?site=www.csdn.net&slot=2",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "first",
+          "initiator": "www.csdn.net",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s41",
+      "name": "掘金",
+      "url": "https://juejin.cn",
+      "category": "科技",
+      "samples": [
+        {
+          "url": "https://pagead2.googlesyndication.com/delivery/5378/ad?site=juejin.cn&slot=0",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "juejin.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://adnxs.com/delivery/2559/ad?site=juejin.cn&slot=1",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "juejin.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.360.cn/delivery/3519/ad?site=juejin.cn&slot=2",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "juejin.cn",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s42",
+      "name": "简书",
+      "url": "https://www.jianshu.com",
+      "category": "科技",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/8503/ad?site=www.jianshu.com&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.jianshu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://taboola.com/delivery/3084/ad?site=www.jianshu.com&slot=1",
+          "type": "展示",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "www.jianshu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://tanx.com/delivery/5595/ad?site=www.jianshu.com&slot=2",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "first",
+          "initiator": "www.jianshu.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s43",
+      "name": "少数派",
+      "url": "https://sspai.com",
+      "category": "科技",
+      "samples": [
+        {
+          "url": "https://googleadservices.com/delivery/5254/ad?site=sspai.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "sspai.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://taboola.com/delivery/4300/ad?site=sspai.com&slot=1",
+          "type": "展示",
+          "resourceType": "sub_frame",
+          "party": "third",
+          "initiator": "sspai.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://mimg.126.net/delivery/4628/ad?site=sspai.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "sspai.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s44",
+      "name": "IT之家",
+      "url": "https://www.ithome.com",
+      "category": "科技",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/8878/ad?site=www.ithome.com&slot=0",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.ithome.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://adsrvr.org/delivery/7944/ad?site=www.ithome.com&slot=1",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.ithome.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://cpro.baidu.com/delivery/5055/ad?site=www.ithome.com&slot=2",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "first",
+          "initiator": "www.ithome.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s45",
+      "name": "什么值得买",
+      "url": "https://www.smzdm.com",
+      "category": "科技",
+      "samples": [
+        {
+          "url": "https://googletagservices.com/delivery/5611/ad?site=www.smzdm.com&slot=0",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.smzdm.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://scorecardresearch.com/delivery/7500/ad?site=www.smzdm.com&slot=1",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.smzdm.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://mimg.126.net/delivery/3646/ad?site=www.smzdm.com&slot=2",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.smzdm.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s46",
+      "name": "东方财富",
+      "url": "https://www.eastmoney.com",
+      "category": "金融",
+      "samples": [
+        {
+          "url": "https://adservice.google.com/delivery/3083/ad?site=www.eastmoney.com&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.eastmoney.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://criteo.com/delivery/3292/ad?site=www.eastmoney.com&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.eastmoney.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://sax.sina.com.cn/delivery/5438/ad?site=www.eastmoney.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.eastmoney.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s47",
+      "name": "同花顺",
+      "url": "https://www.10jqka.com.cn",
+      "category": "金融",
+      "samples": [
+        {
+          "url": "https://adservice.google.com/delivery/1278/ad?site=www.10jqka.com.cn&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.10jqka.com.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://criteo.com/delivery/7225/ad?site=www.10jqka.com.cn&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.10jqka.com.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://mimg.126.net/delivery/3022/ad?site=www.10jqka.com.cn&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.10jqka.com.cn",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s48",
+      "name": "雪球",
+      "url": "https://xueqiu.com",
+      "category": "金融",
+      "samples": [
+        {
+          "url": "https://googletagservices.com/delivery/5340/ad?site=xueqiu.com&slot=0",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "xueqiu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pubmatic.com/delivery/1544/ad?site=xueqiu.com&slot=1",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "xueqiu.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://ad.toutiao.com/delivery/3872/ad?site=xueqiu.com&slot=2",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "xueqiu.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s49",
+      "name": "17173",
+      "url": "https://www.17173.com",
+      "category": "游戏",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/6239/ad?site=www.17173.com&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.17173.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://scorecardresearch.com/delivery/1092/ad?site=www.17173.com&slot=1",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.17173.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://iad.gtimg.com/delivery/8438/ad?site=www.17173.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.17173.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s50",
+      "name": "游民星空",
+      "url": "https://www.gamersky.com",
+      "category": "游戏",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/8838/ad?site=www.gamersky.com&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.gamersky.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://adsrvr.org/delivery/9416/ad?site=www.gamersky.com&slot=1",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.gamersky.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://ad.qt.qq.com/delivery/2242/ad?site=www.gamersky.com&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.gamersky.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s51",
+      "name": "TapTap",
+      "url": "https://www.taptap.cn",
+      "category": "游戏",
+      "samples": [
+        {
+          "url": "https://googleadservices.com/delivery/8310/ad?site=www.taptap.cn&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.taptap.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://adsrvr.org/delivery/7201/ad?site=www.taptap.cn&slot=1",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.taptap.cn",
+          "expected": "block"
+        },
+        {
+          "url": "https://ad.toutiao.com/delivery/4543/ad?site=www.taptap.cn&slot=2",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.taptap.cn",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s52",
+      "name": "YouTube",
+      "url": "https://www.youtube.com",
+      "category": "国际",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/3342/ad?site=www.youtube.com&slot=0",
+          "type": "贴片",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.youtube.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://adnxs.com/delivery/4175/ad?site=www.youtube.com&slot=1",
+          "type": "贴片",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.youtube.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pos.360.cn/delivery/6865/ad?site=www.youtube.com&slot=2",
+          "type": "贴片",
+          "resourceType": "image",
+          "party": "first",
+          "initiator": "www.youtube.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s53",
+      "name": "Facebook",
+      "url": "https://www.facebook.com",
+      "category": "国际",
+      "samples": [
+        {
+          "url": "https://googletagservices.com/delivery/4571/ad?site=www.facebook.com&slot=0",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.facebook.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://scorecardresearch.com/delivery/5499/ad?site=www.facebook.com&slot=1",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.facebook.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://mimg.126.net/delivery/2604/ad?site=www.facebook.com&slot=2",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.facebook.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s54",
+      "name": "Reddit",
+      "url": "https://www.reddit.com",
+      "category": "国际",
+      "samples": [
+        {
+          "url": "https://adservice.google.com/delivery/4418/ad?site=www.reddit.com&slot=0",
+          "type": "信息流",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.reddit.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://criteo.com/delivery/1765/ad?site=www.reddit.com&slot=1",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.reddit.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://ad.toutiao.com/delivery/8210/ad?site=www.reddit.com&slot=2",
+          "type": "信息流",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.reddit.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s55",
+      "name": "CNN",
+      "url": "https://www.cnn.com",
+      "category": "国际",
+      "samples": [
+        {
+          "url": "https://pagead2.googlesyndication.com/delivery/5410/ad?site=www.cnn.com&slot=0",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.cnn.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://adsrvr.org/delivery/7091/ad?site=www.cnn.com&slot=1",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.cnn.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://ad.toutiao.com/delivery/6976/ad?site=www.cnn.com&slot=2",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.cnn.com",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s56",
+      "name": "Wikipedia",
+      "url": "https://www.wikipedia.org",
+      "category": "国际",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/5282/ad?site=www.wikipedia.org&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.wikipedia.org",
+          "expected": "block"
+        },
+        {
+          "url": "https://criteo.com/delivery/5386/ad?site=www.wikipedia.org&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.wikipedia.org",
+          "expected": "block"
+        },
+        {
+          "url": "https://sax.sina.com.cn/delivery/4263/ad?site=www.wikipedia.org&slot=2",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.wikipedia.org",
+          "expected": "block"
+        }
+      ]
+    },
+    {
+      "id": "s57",
+      "name": "Amazon",
+      "url": "https://www.amazon.com",
+      "category": "国际",
+      "samples": [
+        {
+          "url": "https://ad.doubleclick.net/delivery/6982/ad?site=www.amazon.com&slot=0",
+          "type": "展示",
+          "resourceType": "image",
+          "party": "third",
+          "initiator": "www.amazon.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://pubmatic.com/delivery/5441/ad?site=www.amazon.com&slot=1",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "third",
+          "initiator": "www.amazon.com",
+          "expected": "block"
+        },
+        {
+          "url": "https://tanx.com/delivery/6895/ad?site=www.amazon.com&slot=2",
+          "type": "展示",
+          "resourceType": "script",
+          "party": "first",
+          "initiator": "www.amazon.com",
+          "expected": "block"
+        }
+      ]
+    }
+  ]
+}

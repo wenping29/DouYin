@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CleanView</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="hd">
+    <div class="brand">
+      <img src="../icons/icon128.png" class="logo" alt="CleanView" />
+      <h1>CleanView</h1>
+    </div>
+    <label class="switch" title="全局拦截开关">
+      <input type="checkbox" id="globalToggle" />
+      <span class="slider"></span>
+    </label>
+  </header>
+
+  <section class="stats">
+    <div class="stat"><span class="num" id="todayBlocked">0</span><span class="lbl">今日拦截</span></div>
+    <div class="stat"><span class="num" id="todayHidden">0</span><span class="lbl">今日隐藏元素</span></div>
+  </section>
+
+  <section class="site">
+    <div class="site-label">当前站点</div>
+    <div class="site-name" id="siteName">—</div>
+    <button id="sitePause" class="btn-secondary">暂停本域</button>
+    <div class="site-state" id="siteState"></div>
+  </section>
+
+  <footer class="ft">
+    <a href="#" id="openOptions">完整设置</a>
+    <span class="hint" id="statsHint">匿名统计：开启</span>
+  </footer>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

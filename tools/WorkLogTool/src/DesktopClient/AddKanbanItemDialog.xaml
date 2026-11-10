@@ -1,0 +1,20 @@
+<Window x:Class="WorkLogTool.AddKanbanItemDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="添加看板项" Width="400" Height="300"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow"
+        ResizeMode="NoResize">
+    <StackPanel Margin="20">
+        <TextBlock Text="标题:" Margin="0 0 0 5"/>
+        <TextBox x:Name="TitleTextBox" Margin="0 0 0 15"/>
+
+        <TextBlock Text="描述:" Margin="0 0 0 5"/>
+        <TextBox x:Name="DescriptionTextBox" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Margin="0 0 0 15"/>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 20 0 0">
+            <Button x:Name="CancelButton" Content="关闭" Margin="0 0 10 0" Width="80" Click="CancelButton_Click"/>
+            <Button x:Name="AddButton" Content="确认新增" Width="100" Click="AddButton_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

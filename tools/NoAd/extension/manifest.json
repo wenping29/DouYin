@@ -1,0 +1,68 @@
+{
+  "manifest_version": 3,
+  "name": "CleanView 广告拦截",
+  "short_name": "CleanView",
+  "version": "0.1.0",
+  "description": "本地优先、隐私友好的广告拦截扩展（测试版）",
+  "minimum_chrome_version": "110",
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "permissions": [
+    "declarativeNetRequest",
+    "webRequest",
+    "storage",
+    "alarms",
+    "activeTab"
+  ],
+
+  "host_permissions": ["<all_urls>"],
+
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_popup": "src/popup.html",
+    "default_title": "CleanView 广告拦截"
+  },
+
+  "options_page": "src/options.html",
+
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_core",
+        "enabled": true,
+        "path": "rules/ruleset_core.json"
+      },
+      {
+        "id": "ruleset_custom",
+        "enabled": true,
+        "path": "rules/ruleset_custom.json"
+      }
+    ]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/cosmetic-selectors.js", "src/cosmetic-custom.js", "src/content.js"],
+      "css": ["src/content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

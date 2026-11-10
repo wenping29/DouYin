@@ -1,0 +1,4 @@
+/* 由 content.js 标记的广告容器统一隐藏；!important 覆盖站点内联样式 */
+[data-cv-hidden="1"] {
+  display: none !important;
+}

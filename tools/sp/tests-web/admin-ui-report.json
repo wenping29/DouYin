@@ -1,0 +1,66 @@
+{
+  "steps": [
+    {
+      "name": "用户管理页加载",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "菜单含用户管理和管理员",
+      "ok": true,
+      "detail": true
+    },
+    {
+      "name": "用户表列名",
+      "ok": true,
+      "detail": true
+    },
+    {
+      "name": "打新增用户弹窗",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "新增用户出现在列表",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "编辑用户信息",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "封禁用户",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "解封用户",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "删除用户",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "管理员页加载并列出 root",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "管理员页按钮为新增管理员",
+      "ok": true,
+      "detail": true
+    }
+  ],
+  "shots": [
+    "admin-users-page.png",
+    "admin-users-create.png",
+    "admin-users-blocked.png",
+    "admin-admins-page.png"
+  ],
+  "failed": 0
+}
