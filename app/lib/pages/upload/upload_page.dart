@@ -20,6 +20,66 @@ class UploadPage extends StatefulWidget {
   State<UploadPage> createState() => _UploadPageState();
 }
 
+class _UploadTab extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+
+  const _UploadTab({
+    required this.icon,
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    icon,
+                    size: 17,
+                    color: active ? AppColors.accent : AppColors.muted,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+                      color: active ? Colors.white : AppColors.muted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              height: 2,
+              width: active ? 28 : 0,
+              decoration: BoxDecoration(
+                color: AppColors.accent,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _UploadItem {
   _UploadItem(this.video);
 
@@ -62,6 +122,7 @@ class _UploadPageState extends State<UploadPage> {
   String? _previewError;
   double _progress = 0;
   int _previewGeneration = 0;
+  int _tab = 0;
 
   @override
   void dispose() {
@@ -438,8 +499,7 @@ class _UploadPageState extends State<UploadPage> {
     );
   }
 
-  Widget _buildCoverSettings() {
-    final item = _selected!;
+  Widget _buildCoverSettings(_UploadItem item) {
     final coverBytes = item.coverBytes;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -599,6 +659,291 @@ class _UploadPageState extends State<UploadPage> {
     );
   }
 
+  void _selectTab(int index) {
+    if (_tab == index) return;
+    // 切换 Tab 时收起键盘，避免输入焦点遮挡内容。
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() => _tab = index);
+  }
+
+  Widget _buildTabBar() {
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.white12)),
+      ),
+      child: Row(
+        children: [
+          _UploadTab(
+            icon: Icons.movie_outlined,
+            label: '视频',
+            active: _tab == 0,
+            onTap: () => _selectTab(0),
+          ),
+          _UploadTab(
+            icon: Icons.image_outlined,
+            label: '封面',
+            active: _tab == 1,
+            onTap: () => _selectTab(1),
+          ),
+          _UploadTab(
+            icon: Icons.music_note_rounded,
+            label: '配乐',
+            active: _tab == 2,
+            onTap: () => _selectTab(2),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildVideoTab() {
+    return [
+      OutlinedButton.icon(
+        onPressed: _pickVideos,
+        icon: const Icon(Icons.video_library_outlined, size: 18),
+        label: Text(_videos.isEmpty ? '选择视频' : '继续添加视频'),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Colors.white,
+          side: const BorderSide(color: Colors.white24),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+        ),
+      ),
+      _buildVideoQueue(),
+      const SizedBox(height: 14),
+      TextField(
+        controller: _title,
+        maxLength: 100,
+        decoration: const InputDecoration(hintText: '给作品起个标题', counterText: ''),
+      ),
+      const SizedBox(height: 12),
+      TextField(
+        controller: _description,
+        maxLines: 4,
+        maxLength: 500,
+        decoration: const InputDecoration(
+          hintText: '添加描述、话题，让更多人看到（选填）',
+          counterText: '',
+          alignLabelWithHint: true,
+        ),
+      ),
+      const SizedBox(height: 16),
+      _buildHintCard(
+        '支持 mp4 / mov / webm，每个视频不超过 200MB。可一次选择多个视频并拖动排序，'
+        '标题、描述会应用到本次发布的全部作品。当前为学习演示版本，请勿上传违规或侵权内容。',
+      ),
+    ];
+  }
+
+  Widget _buildCoverTargetSwitcher() {
+    final selected = _selected;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Text(
+              '当前设置对象',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                selected?.video.name ?? '',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: AppColors.cyan, fontSize: 12),
+              ),
+            ),
+          ],
+        ),
+        if (_videos.length > 1) ...[
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 36,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: _videos.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                final item = _videos[index];
+                final active = identical(item, selected);
+                return ChoiceChip(
+                  label: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 110),
+                    child: Text(
+                      item.video.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: active ? Colors.white : AppColors.muted,
+                      ),
+                    ),
+                  ),
+                  selected: active,
+                  selectedColor: AppColors.accent.withValues(alpha: 0.22),
+                  backgroundColor: AppColors.surfaceAlt,
+                  side: BorderSide(
+                    color: active ? AppColors.accent : Colors.white12,
+                  ),
+                  showCheckmark: false,
+                  onSelected: (_) {
+                    if (identical(item, _selected)) return;
+                    _selectVideo(item);
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  List<Widget> _buildCoverTab() {
+    final item = _selected;
+    if (item == null) {
+      return [
+        _buildTabPlaceholder(
+          icon: Icons.image_outlined,
+          title: '请先选择视频',
+          message: '选择视频后可上传自定义封面，或从上方预览画面中截取封面。',
+          action: '去选择视频',
+          onAction: () => _selectTab(0),
+        ),
+      ];
+    }
+    return [
+      _buildCoverTargetSwitcher(),
+      const SizedBox(height: 16),
+      _buildCoverSettings(item),
+      const SizedBox(height: 16),
+      _buildHintCard(
+        '封面默认使用当前预览画面。拖动上方视频进度条到目标画面，'
+        '再点「使用当前画面」即可重新截取；也可以从相册上传图片。'
+        '封面只作用于当前选中的视频，多个视频可在上方切换后分别设置。',
+      ),
+    ];
+  }
+
+  List<Widget> _buildMusicTab() {
+    return [
+      const Text(
+        '作品配乐',
+        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+      ),
+      const SizedBox(height: 10),
+      TextField(
+        controller: _music,
+        maxLength: 100,
+        decoration: const InputDecoration(
+          hintText: '音乐名称 / 音乐人（选填）',
+          prefixIcon: Icon(Icons.music_note_rounded),
+          counterText: '',
+        ),
+      ),
+      const SizedBox(height: 4),
+      ValueListenableBuilder<TextEditingValue>(
+        valueListenable: _music,
+        builder: (context, value, _) {
+          final name = value.text.trim();
+          return Row(
+            children: [
+              Expanded(
+                child: Text(
+                  name.isEmpty ? '未设置配乐' : '当前配乐：$name',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: name.isEmpty ? AppColors.muted : AppColors.cyan,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+              if (value.text.isNotEmpty)
+                TextButton(onPressed: _music.clear, child: const Text('清除')),
+            ],
+          );
+        },
+      ),
+      const SizedBox(height: 16),
+      _buildHintCard(
+        '音乐名称会展示在作品中；当前不会对视频音轨进行混音，也不支持上传音频文件。'
+        '配乐信息会应用到本次发布的全部作品。',
+      ),
+    ];
+  }
+
+  Widget _buildTabPlaceholder({
+    required IconData icon,
+    required String title,
+    required String message,
+    required String action,
+    required VoidCallback onAction,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 18),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white12),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 34, color: AppColors.muted),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: AppColors.muted,
+              fontSize: 12,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 14),
+          OutlinedButton(onPressed: onAction, child: Text(action)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHintCard(String message) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF161616),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.info_outline_rounded,
+            color: AppColors.muted,
+            size: 17,
+          ),
+          const SizedBox(width: 9),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(
+                color: AppColors.muted,
+                fontSize: 12,
+                height: 1.6,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -609,88 +954,12 @@ class _UploadPageState extends State<UploadPage> {
           padding: const EdgeInsets.fromLTRB(18, 8, 18, 24),
           children: [
             _buildVideoPreview(),
-            const SizedBox(height: 8),
-            if (_selected != null) ...[
-              _buildCoverSettings(),
-              const SizedBox(height: 12),
-            ],
-            OutlinedButton.icon(
-              onPressed: _pickVideos,
-              icon: const Icon(Icons.video_library_outlined, size: 18),
-              label: Text(_videos.isEmpty ? '选择视频' : '继续添加视频'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.white,
-                side: const BorderSide(color: Colors.white24),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
-            _buildVideoQueue(),
-            const SizedBox(height: 14),
-            TextField(
-              controller: _title,
-              maxLength: 100,
-              decoration: const InputDecoration(
-                hintText: '给作品起个标题',
-                counterText: '',
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _description,
-              maxLines: 4,
-              maxLength: 500,
-              decoration: const InputDecoration(
-                hintText: '添加描述、话题，让更多人看到（选填）',
-                counterText: '',
-                alignLabelWithHint: true,
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _music,
-              maxLength: 100,
-              decoration: const InputDecoration(
-                hintText: '音乐名称 / 音乐人（选填）',
-                prefixIcon: Icon(Icons.music_note_rounded),
-                counterText: '',
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 2),
-              child: Text(
-                '音乐名称会展示在作品中；当前不会对视频音轨进行混音。',
-                style: TextStyle(color: AppColors.muted, fontSize: 11),
-              ),
-            ),
             const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: const Color(0xFF161616),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.info_outline_rounded,
-                    color: AppColors.muted,
-                    size: 17,
-                  ),
-                  SizedBox(width: 9),
-                  Expanded(
-                    child: Text(
-                      '支持 mp4 / mov / webm，每个视频不超过 200MB。封面默认截取当前预览画面，也可以上传图片。当前为学习演示版本，请勿上传违规或侵权内容。',
-                      style: TextStyle(
-                        color: AppColors.muted,
-                        fontSize: 12,
-                        height: 1.6,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildTabBar(),
+            const SizedBox(height: 18),
+            if (_tab == 0) ..._buildVideoTab(),
+            if (_tab == 1) ..._buildCoverTab(),
+            if (_tab == 2) ..._buildMusicTab(),
           ],
         ),
       ),
