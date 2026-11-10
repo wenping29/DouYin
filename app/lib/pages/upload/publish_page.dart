@@ -14,8 +14,14 @@ import 'video_frame_capture.dart';
 class PublishPage extends StatefulWidget {
   final List<XFile> videos;
   final XFile? image;
+  final String musicName;
 
-  const PublishPage({super.key, this.videos = const [], this.image});
+  const PublishPage({
+    super.key,
+    this.videos = const [],
+    this.image,
+    this.musicName = '',
+  });
 
   @override
   State<PublishPage> createState() => _PublishPageState();
@@ -117,7 +123,7 @@ class _PublishPageState extends State<PublishPage> {
           cover: coverFile,
           title: _title.text.trim().isEmpty ? '未命名作品' : _title.text.trim(),
           description: _description.text.trim(),
-          musicName: '',
+          musicName: widget.musicName,
           onProgress: (p) {
             if (mounted) setState(() => _progress = p);
           },
@@ -136,7 +142,7 @@ class _PublishPageState extends State<PublishPage> {
                   ),
             title: _title.text.trim().isEmpty ? '未命名作品' : _title.text.trim(),
             description: _description.text.trim(),
-            musicName: '',
+            musicName: widget.musicName,
             duration: _controller?.value.duration.inMilliseconds != null
                 ? _controller!.value.duration.inSeconds.toDouble()
                 : null,

@@ -9,8 +9,9 @@ import 'publish_page.dart';
 
 class EditPage extends StatefulWidget {
   final List<XFile> videos;
+  final String musicName;
 
-  const EditPage({super.key, required this.videos});
+  const EditPage({super.key, required this.videos, this.musicName = ''});
 
   @override
   State<EditPage> createState() => _EditPageState();
@@ -66,7 +67,10 @@ class _EditPageState extends State<EditPage> {
 
   void _goPublish() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => PublishPage(videos: widget.videos)),
+      MaterialPageRoute(
+        builder: (_) =>
+            PublishPage(videos: widget.videos, musicName: widget.musicName),
+      ),
     );
   }
 

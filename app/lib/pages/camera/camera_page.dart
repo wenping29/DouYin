@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme.dart';
+import '../../data/music_catalog.dart';
 import '../upload/album_page.dart';
 import '../upload/edit_page.dart';
 import '../upload/publish_page.dart';
@@ -164,9 +166,14 @@ class _CameraPageState extends State<CameraPage>
       Future.delayed(const Duration(milliseconds: 120), () {
         if (mounted) setState(() => _shutter = false);
       });
-      final result = await Navigator.of(context).push<bool>(
-        MaterialPageRoute(builder: (_) => PublishPage(image: XFile(file.path))),
-      );
+        final result = await Navigator.of(context).push<bool>(
+          MaterialPageRoute(
+            builder: (_) => PublishPage(
+              image: XFile(file.path),
+              musicName: _musicName ?? '',
+            ),
+          ),
+        );
       if (result == true && mounted) Navigator.of(context).pop(true);
     } catch (e) {
       if (mounted) setState(() => _shutter = false);
@@ -207,7 +214,10 @@ class _CameraPageState extends State<CameraPage>
       setState(() => _recording = false);
       final result = await Navigator.of(context).push<bool>(
         MaterialPageRoute(
-          builder: (_) => EditPage(videos: [XFile(file.path)]),
+          builder: (_) => EditPage(
+            videos: [XFile(file.path)],
+            musicName: _musicName ?? '',
+          ),
         ),
       );
       if (result == true && mounted) Navigator.of(context).pop(true);
@@ -916,20 +926,53 @@ class _NavBarButton extends StatelessWidget {
   }
 }
 
-class _MusicSheet extends StatelessWidget {
+class _MusicSheet extends StatefulWidget {
   final String? musicName;
   final ValueChanged<String> onPick;
 
   const _MusicSheet({required this.musicName, required this.onPick});
 
-  static const _songs = [
-    '胜利 - 瑞鹅',
-    '星辰大海 - 黄霄雲',
-    '错位时空 - 艾辰',
-  ];
+  @override
+  State<_MusicSheet> createState() => _MusicSheetState();
+}
+
+class _MusicSheetState extends State<_MusicSheet> {
+  final AudioPlayer _player = AudioPlayer();
+  String? _playingId;
+  String _query = '';
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
+  }
+
+  Future<void> _toggle(TrendingSong song) async {
+    if (_playingId == song.id) {
+      await _player.stop();
+      if (mounted) setState(() => _playingId = null);
+      return;
+    }
+    try {
+      await _player.stop();
+      await _player.play(AssetSource(song.audioAsset));
+      if (mounted) setState(() => _playingId = song.id);
+    } catch (_) {
+      // 占位音频缺失时静默失败
+    }
+  }
+
+  List<TrendingSong> get _filtered {
+    final q = _query.trim();
+    if (q.isEmpty) return trendingSongs;
+    return trendingSongs
+        .where((s) => s.title.contains(q) || s.artist.contains(q))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final list = _filtered;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
       child: Column(
@@ -954,6 +997,7 @@ class _MusicSheet extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           TextField(
+            onChanged: (v) => setState(() => _query = v),
             decoration: InputDecoration(
               hintText: '搜索音乐',
               prefixIcon: const Icon(Icons.search, size: 20),
@@ -970,11 +1014,56 @@ class _MusicSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          ..._songs.map(
-            (song) => ListTile(
-              leading: const Icon(Icons.music_note, color: Colors.white70),
-              title: Text(song, style: const TextStyle(color: Colors.white)),
-              onTap: () => onPick(song),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 380),
+            child: ListView.separated(
+              shrinkWrap: true,
+              itemCount: list.length,
+              separatorBuilder: (_, _) =>
+                  const Divider(height: 1, color: Colors.white12),
+              itemBuilder: (ctx, i) {
+                final s = list[i];
+                final selected = widget.musicName == '${s.title} - ${s.artist}';
+                final playing = _playingId == s.id;
+                return ListTile(
+                  leading: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: Text(s.emoji, style: const TextStyle(fontSize: 22)),
+                    ),
+                  ),
+                  title: Text(
+                    s.title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight:
+                          selected ? FontWeight.w700 : FontWeight.w400,
+                    ),
+                  ),
+                  subtitle: Text(
+                    '${s.artist} · ${s.style} · ${s.duration}',
+                    style: const TextStyle(color: Colors.white60, fontSize: 12),
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(
+                      playing
+                          ? Icons.pause_circle_filled
+                          : Icons.play_circle_outline,
+                      color: playing ? AppColors.accent : Colors.white70,
+                    ),
+                    onPressed: () => _toggle(s),
+                  ),
+                  onTap: () {
+                    widget.onPick('${s.title} - ${s.artist}');
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
             ),
           ),
         ],
