@@ -64,6 +64,26 @@ public sealed class DataStore
         await using var command = connection.CreateCommand();
         command.CommandText = schema;
         await command.ExecuteNonQueryAsync();
+        if (_postgres)
+        {
+            command.CommandText = "ALTER TABLE videos ADD COLUMN IF NOT EXISTS music_name TEXT NOT NULL DEFAULT ''";
+            await command.ExecuteNonQueryAsync();
+        }
+        else
+        {
+            command.CommandText = "PRAGMA table_info(videos)";
+            var hasMusicName = false;
+            await using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                    hasMusicName |= reader.GetString(1).Equals("music_name", StringComparison.OrdinalIgnoreCase);
+            }
+            if (!hasMusicName)
+            {
+                command.CommandText = "ALTER TABLE videos ADD COLUMN music_name TEXT NOT NULL DEFAULT ''";
+                await command.ExecuteNonQueryAsync();
+            }
+        }
         if (!_postgres)
         {
             command.CommandText = "PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;";
@@ -191,6 +211,7 @@ public sealed class DataStore
         CREATE TABLE IF NOT EXISTS videos (
           id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
           title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', video_url TEXT NOT NULL, cover_url TEXT,
+          music_name TEXT NOT NULL DEFAULT '',
           duration REAL NOT NULL DEFAULT 0, width INTEGER NOT NULL DEFAULT 0, height INTEGER NOT NULL DEFAULT 0,
           view_count INTEGER NOT NULL DEFAULT 0, like_count INTEGER NOT NULL DEFAULT 0,
           comment_count INTEGER NOT NULL DEFAULT 0, share_count INTEGER NOT NULL DEFAULT 0,
@@ -233,6 +254,7 @@ public sealed class DataStore
         CREATE TABLE IF NOT EXISTS videos (
           id BIGSERIAL PRIMARY KEY, user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
           title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', video_url TEXT NOT NULL, cover_url TEXT,
+          music_name TEXT NOT NULL DEFAULT '',
           duration DOUBLE PRECISION NOT NULL DEFAULT 0, width INTEGER NOT NULL DEFAULT 0, height INTEGER NOT NULL DEFAULT 0,
           view_count BIGINT NOT NULL DEFAULT 0, like_count BIGINT NOT NULL DEFAULT 0,
           comment_count BIGINT NOT NULL DEFAULT 0, share_count BIGINT NOT NULL DEFAULT 0,

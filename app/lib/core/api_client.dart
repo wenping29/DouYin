@@ -169,6 +169,7 @@ class ApiClient {
     XFile? cover,
     required String title,
     String description = '',
+    String musicName = '',
     double? duration,
     void Function(double progress)? onProgress,
   }) async {
@@ -195,6 +196,7 @@ class ApiClient {
     }
     form.fields.add(MapEntry('title', title));
     form.fields.add(MapEntry('description', description));
+    form.fields.add(MapEntry('musicName', musicName));
     if (duration != null && duration > 0) {
       form.fields.add(MapEntry('duration', duration.toStringAsFixed(2)));
     }

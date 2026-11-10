@@ -46,14 +46,16 @@ public sealed class VideosController(DataStore db, AuthService auth, BackendPath
             if (title.Length == 0)
                 title = "未命名作品";
             var description = Text(form["description"].FirstOrDefault(), 500);
+            var musicName = Text(form["musicName"].FirstOrDefault(), 100);
             _ = double.TryParse(form["duration"].FirstOrDefault(), NumberStyles.Float, CultureInfo.InvariantCulture, out var duration);
             var videoId = await db.InsertIdAsync(
                 """
-                    INSERT INTO videos (user_id, title, description, video_url, cover_url, duration, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id
+                    INSERT INTO videos (user_id, title, description, video_url, cover_url, music_name, duration, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id
                     """,
                 Number(viewer, "id"), title, description, $"/media/videos/{videoName}",
-                coverName is null ? null : $"/media/covers/{coverName}", Math.Max(0, duration), db.Timestamp(DateTimeOffset.UtcNow));
+                coverName is null ? null : $"/media/covers/{coverName}", musicName,
+                Math.Max(0, duration), db.Timestamp(DateTimeOffset.UtcNow));
             if (coverName is null)
             {
                 coverName = $"v{videoId}.png";

@@ -50,6 +50,7 @@ class Video {
   final String description;
   final String videoUrl;
   final String? coverUrl;
+  final String musicName;
   final double duration;
   final int viewCount;
   final int likeCount;
@@ -65,6 +66,7 @@ class Video {
     required this.description,
     required this.videoUrl,
     required this.coverUrl,
+    required this.musicName,
     required this.duration,
     required this.viewCount,
     required this.likeCount,
@@ -82,6 +84,7 @@ class Video {
       description: '${json['description'] ?? ''}',
       videoUrl: '${json['videoUrl'] ?? ''}',
       coverUrl: json['coverUrl']?.toString(),
+      musicName: '${json['musicName'] ?? ''}',
       duration: _double(json['duration']),
       viewCount: _int(json['viewCount']),
       likeCount: _int(json['likeCount']),
@@ -110,6 +113,7 @@ class Video {
       description: description,
       videoUrl: videoUrl,
       coverUrl: coverUrl,
+      musicName: musicName,
       duration: duration,
       viewCount: viewCount,
       likeCount: likeCount ?? this.likeCount,

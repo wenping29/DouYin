@@ -509,7 +509,9 @@ class _VideoInfo extends StatelessWidget {
             const SizedBox(width: 4),
             Expanded(
               child: Text(
-                '原声 · ${video.author.nickname}',
+                video.musicName.isEmpty
+                    ? '原声 · ${video.author.nickname}'
+                    : video.musicName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(

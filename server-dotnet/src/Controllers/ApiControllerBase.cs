@@ -91,6 +91,7 @@ public abstract class ApiControllerBase(DataStore db, AuthService auth, BackendP
             description = String(row, "description"),
             videoUrl = String(row, "video_url"),
             coverUrl = row.GetValueOrDefault("cover_url"),
+            musicName = String(row, "music_name"),
             duration = Double(row, "duration"),
             width = Number(row, "width"),
             height = Number(row, "height"),
