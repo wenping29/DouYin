@@ -56,6 +56,7 @@ class _UploadPageState extends State<UploadPage> {
   _UploadItem? _selected;
   VideoPlayerController? _controller;
   bool _previewLoading = false;
+  bool _preparingPreviews = false;
   bool _uploading = false;
   bool _playing = false;
   String? _previewError;
@@ -91,7 +92,18 @@ class _UploadPageState extends State<UploadPage> {
         return;
       }
       setState(() => _videos.addAll(additions));
-      if (_selected == null) await _selectVideo(additions.first);
+      final restoreSelection = _selected ?? additions.first;
+      setState(() => _preparingPreviews = true);
+      try {
+        for (final item in additions) {
+          if (!identical(item, _selected)) await _selectVideo(item);
+        }
+        if (mounted && !identical(restoreSelection, _selected)) {
+          await _selectVideo(restoreSelection);
+        }
+      } finally {
+        if (mounted) setState(() => _preparingPreviews = false);
+      }
     } catch (error) {
       if (mounted) _showMessage('选择视频失败：$error');
     }
@@ -127,11 +139,10 @@ class _UploadPageState extends State<UploadPage> {
       item.duration = controller.value.duration.inMilliseconds / 1000;
       _previewLoading = false;
       setState(() {});
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && generation == _previewGeneration) {
-          _capturePreviewFrame(item);
-        }
-      });
+      await WidgetsBinding.instance.endOfFrame;
+      if (mounted && generation == _previewGeneration) {
+        await _capturePreviewFrame(item);
+      }
     } catch (error) {
       await controller.dispose();
       if (!mounted || generation != _previewGeneration) return;
@@ -517,8 +528,8 @@ class _UploadPageState extends State<UploadPage> {
               style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
             const Spacer(),
-            const Text(
-              '拖动排序',
+            Text(
+              _preparingPreviews ? '正在生成预览封面…' : '拖动排序',
               style: TextStyle(color: AppColors.muted, fontSize: 12),
             ),
           ],
@@ -593,7 +604,7 @@ class _UploadPageState extends State<UploadPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('发布作品')),
       body: AbsorbPointer(
-        absorbing: _uploading,
+        absorbing: _uploading || _preparingPreviews,
         child: ListView(
           padding: const EdgeInsets.fromLTRB(18, 8, 18, 24),
           children: [
@@ -725,7 +736,7 @@ class _UploadPageState extends State<UploadPage> {
                 height: 48,
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: _uploading ? null : _publish,
+                  onPressed: _uploading || _preparingPreviews ? null : _publish,
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.accent,
                     disabledBackgroundColor: AppColors.accent.withValues(
@@ -736,7 +747,9 @@ class _UploadPageState extends State<UploadPage> {
                     ),
                   ),
                   child: Text(
-                    _uploading
+                    _preparingPreviews
+                        ? '正在生成预览封面…'
+                        : _uploading
                         ? '发布中…'
                         : _published.isEmpty
                         ? '发布${_videos.isEmpty ? '' : ' ${_videos.length} 个作品'}'
