@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme.dart';
+import 'camera/camera_page.dart';
 import 'home/home_feed_page.dart';
 import 'notifications_page.dart';
 import 'profile/profile_page.dart';
 import 'search/search_page.dart';
-import 'upload/upload_page.dart';
 
 class RootShell extends StatefulWidget {
   const RootShell({super.key});
@@ -22,7 +22,7 @@ class _RootShellState extends State<RootShell> {
   Future<void> _openUpload() async {
     final published = await Navigator.of(
       context,
-    ).push<bool>(MaterialPageRoute(builder: (_) => const UploadPage()));
+    ).push<bool>(MaterialPageRoute(builder: (_) => const CameraPage()));
     if (published == true && mounted) {
       setState(() => _index = 4);
     }
