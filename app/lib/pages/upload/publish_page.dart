@@ -13,8 +13,9 @@ import 'video_frame_capture.dart';
 
 class PublishPage extends StatefulWidget {
   final List<XFile> videos;
+  final XFile? image;
 
-  const PublishPage({super.key, required this.videos});
+  const PublishPage({super.key, this.videos = const [], this.image});
 
   @override
   State<PublishPage> createState() => _PublishPageState();
@@ -50,6 +51,14 @@ class _PublishPageState extends State<PublishPage> {
   }
 
   Future<void> _generateCover() async {
+    // 图片帖：图片本身即封面
+    if (widget.image != null) {
+      try {
+        _coverBytes = await widget.image!.readAsBytes();
+      } catch (_) {}
+      if (mounted) setState(() => _loadingCover = false);
+      return;
+    }
     final video = widget.videos.firstOrNull;
     if (video == null) {
       if (mounted) setState(() => _loadingCover = false);
@@ -84,8 +93,8 @@ class _PublishPageState extends State<PublishPage> {
 
   Future<void> _publish() async {
     if (_uploading) return;
-    if (widget.videos.isEmpty) {
-      _toast('请先选择要发布的视频');
+    if (widget.image == null && widget.videos.isEmpty) {
+      _toast('请先选择要发布的内容');
       return;
     }
     setState(() {
@@ -93,38 +102,62 @@ class _PublishPageState extends State<PublishPage> {
       _progress = 0;
     });
     final api = context.read<AppState>().api;
-    var completed = 0;
     try {
-      for (final video in widget.videos) {
-        await api.uploadVideo(
-          video: video,
-          cover: _coverBytes == null
-              ? null
-              : XFile.fromData(
-                  _coverBytes!,
-                  name: 'cover.jpg',
-                  mimeType: 'image/jpeg',
-                ),
+      if (widget.image != null) {
+        // 图片帖：封面即图片本身
+        final coverFile = _coverBytes == null
+            ? null
+            : XFile.fromData(
+                _coverBytes!,
+                name: 'cover.jpg',
+                mimeType: 'image/jpeg',
+              );
+        await api.uploadImagePost(
+          image: widget.image!,
+          cover: coverFile,
           title: _title.text.trim().isEmpty ? '未命名作品' : _title.text.trim(),
           description: _description.text.trim(),
           musicName: '',
-          duration: _controller?.value.duration.inMilliseconds != null
-              ? _controller!.value.duration.inSeconds.toDouble()
-              : null,
           onProgress: (p) {
-            if (!mounted) return;
-            setState(
-              () => _progress =
-                  (completed + p) / widget.videos.length,
-            );
+            if (mounted) setState(() => _progress = p);
           },
         );
-        completed += 1;
-        if (mounted) setState(() => _progress = completed / widget.videos.length);
+      } else {
+        var completed = 0;
+        for (final video in widget.videos) {
+          await api.uploadVideo(
+            video: video,
+            cover: _coverBytes == null
+                ? null
+                : XFile.fromData(
+                    _coverBytes!,
+                    name: 'cover.jpg',
+                    mimeType: 'image/jpeg',
+                  ),
+            title: _title.text.trim().isEmpty ? '未命名作品' : _title.text.trim(),
+            description: _description.text.trim(),
+            musicName: '',
+            duration: _controller?.value.duration.inMilliseconds != null
+                ? _controller!.value.duration.inSeconds.toDouble()
+                : null,
+            onProgress: (p) {
+              if (!mounted) return;
+              setState(
+                () => _progress = (completed + p) / widget.videos.length,
+              );
+            },
+          );
+          completed += 1;
+          if (mounted) {
+            setState(() => _progress = completed / widget.videos.length);
+          }
+        }
       }
       if (!mounted) return;
       context.read<AppState>().bumpData();
-      _toast('发布成功，共发布 ${widget.videos.length} 个作品');
+      _toast(widget.image != null
+          ? '图片发布成功'
+          : '发布成功，共发布 ${widget.videos.length} 个作品');
       Navigator.of(context).pop(true);
     } on ApiException catch (e) {
       if (mounted) _toast('发布失败：${e.message}');

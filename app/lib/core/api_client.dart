@@ -212,6 +212,52 @@ class ApiClient {
     );
   }
 
+  /// 发布图片帖（封面即图片本身）。
+  /// 注意：端点 /api/images 为新增约定，尚未与后端联调确认。
+  Future<Map<String, dynamic>> uploadImagePost({
+    required XFile image,
+    XFile? cover,
+    required String title,
+    String description = '',
+    String musicName = '',
+    void Function(double progress)? onProgress,
+  }) async {
+    final form = FormData();
+    form.files.add(
+      MapEntry(
+        'image',
+        MultipartFile.fromBytes(
+          await image.readAsBytes(),
+          filename: _safeName(image, 'image.jpg'),
+        ),
+      ),
+    );
+    if (cover != null) {
+      form.files.add(
+        MapEntry(
+          'cover',
+          MultipartFile.fromBytes(
+            await cover.readAsBytes(),
+            filename: _safeName(cover, 'cover.jpg'),
+          ),
+        ),
+      );
+    }
+    form.fields.add(MapEntry('title', title));
+    form.fields.add(MapEntry('description', description));
+    form.fields.add(MapEntry('musicName', musicName));
+
+    return _run(
+      () => _dio.post(
+        '/api/images',
+        data: form,
+        onSendProgress: (sent, total) {
+          if (total > 0) onProgress?.call(sent / total);
+        },
+      ),
+    );
+  }
+
   Future<Map<String, dynamic>> deleteVideo(int id) =>
       _run(() => _dio.delete('/api/videos/$id'));
 

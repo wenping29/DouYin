@@ -1,7 +1,12 @@
+import 'dart:async';
+
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme.dart';
 import '../upload/album_page.dart';
+import '../upload/edit_page.dart';
+import '../upload/publish_page.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -10,16 +15,207 @@ class CameraPage extends StatefulWidget {
   State<CameraPage> createState() => _CameraPageState();
 }
 
-class _CameraPageState extends State<CameraPage> {
-  // 0 分段拍 / 1 照片 / 2 视频
-  int _mode = 2;
+class _CameraPageState extends State<CameraPage>
+    with WidgetsBindingObserver {
+  List<CameraDescription> _cameras = [];
+  CameraController? _controller;
+  int _cameraIndex = 0; // 0=后置 1=前置
+  bool _initError = false;
+  String? _initErrorMsg;
+
+  // 0 分段拍 / 1 照片 / 2 视频（按需求默认进入拍照页）
+  int _mode = 1;
   bool _flashOn = false;
-  bool _flipped = false;
   bool _countdown = false;
+  bool _recording = false;
   bool _pressing = false;
+  bool _shutter = false;
   String? _musicName;
+  final Stopwatch _recTimer = Stopwatch();
+  Timer? _uiTimer;
 
   static const _modes = ['分段拍', '照片', '视频'];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _initCamera();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _uiTimer?.cancel();
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_controller == null) return;
+    if (state == AppLifecycleState.inactive) {
+      _controller?.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      _initCamera();
+    }
+  }
+
+  Future<void> _initCamera() async {
+    try {
+      _cameras = await availableCameras();
+      if (_cameras.isEmpty) {
+        if (mounted) setState(() => _initError = true);
+        return;
+      }
+      await _setupController(_cameraIndex);
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _initError = true;
+          _initErrorMsg = e.toString();
+        });
+      }
+    }
+  }
+
+  Future<void> _setupController(int index) async {
+    if (_cameras.isEmpty) return;
+    _cameraIndex = index.clamp(0, _cameras.length - 1);
+    final controller = CameraController(
+      _cameras[_cameraIndex],
+      ResolutionPreset.high,
+      enableAudio: true,
+      imageFormatGroup: ImageFormatGroup.jpeg,
+    );
+    _controller = controller;
+    try {
+      await controller.initialize();
+      if (mounted) {
+        setState(() {
+          _initError = false;
+          _initErrorMsg = null;
+        });
+      }
+      await _applyFlash();
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _initError = true;
+          _initErrorMsg = e.toString();
+        });
+      }
+    }
+  }
+
+  Future<void> _applyFlash() async {
+    final c = _controller;
+    if (c == null || !c.value.isInitialized) return;
+    try {
+      final mode = _flashOn
+          ? (_mode == 1 ? FlashMode.always : FlashMode.torch)
+          : FlashMode.off;
+      await c.setFlashMode(mode);
+    } catch (_) {
+      // 前置摄像头可能不支持物理闪光，忽略
+    }
+  }
+
+  Future<void> _flip() async {
+    if (_cameras.length < 2) {
+      _toast('设备仅有一个摄像头');
+      return;
+    }
+    if (_recording) return;
+    final next = (_cameraIndex + 1) % _cameras.length;
+    await _controller?.dispose();
+    _controller = null;
+    if (mounted) setState(() {});
+    await _setupController(next);
+    _toast(next == 0 ? '已切换至后摄像头' : '已切换至前摄像头');
+  }
+
+  Future<void> _toggleFlash() async {
+    _flashOn = !_flashOn;
+    await _applyFlash();
+    if (mounted) setState(() {});
+    _toast(_flashOn ? '闪光灯开启' : '闪光灯关闭');
+  }
+
+  void _onModeChanged(int v) {
+    if (_recording) return;
+    setState(() => _mode = v);
+    _applyFlash();
+  }
+
+  Future<void> _capturePhoto() async {
+    final c = _controller;
+    if (c == null || !c.value.isInitialized) {
+      _toast('相机未就绪');
+      return;
+    }
+    if (c.value.isTakingPicture) return;
+    try {
+      await c.setFlashMode(_flashOn ? FlashMode.always : FlashMode.off);
+      // 快门闪烁
+      if (mounted) setState(() => _shutter = true);
+      final file = await c.takePicture();
+      if (!mounted) return;
+      Future.delayed(const Duration(milliseconds: 120), () {
+        if (mounted) setState(() => _shutter = false);
+      });
+      final result = await Navigator.of(context).push<bool>(
+        MaterialPageRoute(builder: (_) => PublishPage(image: XFile(file.path))),
+      );
+      if (result == true && mounted) Navigator.of(context).pop(true);
+    } catch (e) {
+      if (mounted) setState(() => _shutter = false);
+      _toast('拍照失败：$e');
+    }
+  }
+
+  Future<void> _startRecord() async {
+    final c = _controller;
+    if (c == null || !c.value.isInitialized) return;
+    if (c.value.isRecordingVideo) return;
+    setState(() => _pressing = true);
+    try {
+      await c.setFlashMode(_flashOn ? FlashMode.torch : FlashMode.off);
+      await c.startVideoRecording();
+      if (!mounted) return;
+      _recTimer.reset();
+      _recTimer.start();
+      _uiTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (mounted) setState(() {});
+      });
+      setState(() => _recording = true);
+    } catch (e) {
+      setState(() => _pressing = false);
+      _toast('录制启动失败：$e');
+    }
+  }
+
+  Future<void> _stopRecord() async {
+    setState(() => _pressing = false);
+    final c = _controller;
+    if (c == null || !c.value.isRecordingVideo) return;
+    try {
+      _uiTimer?.cancel();
+      _recTimer.stop();
+      final file = await c.stopVideoRecording();
+      if (!mounted) return;
+      setState(() => _recording = false);
+      final result = await Navigator.of(context).push<bool>(
+        MaterialPageRoute(
+          builder: (_) => EditPage(videos: [XFile(file.path)]),
+        ),
+      );
+      if (result == true && mounted) Navigator.of(context).pop(true);
+    } catch (e) {
+      if (mounted) setState(() => _recording = false);
+      _toast('停止录制失败：$e');
+    }
+  }
 
   void _toast(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -30,9 +226,7 @@ class _CameraPageState extends State<CameraPage> {
   void _close() => Navigator.of(context).pop();
 
   void _openAlbum() {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const AlbumPage()));
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AlbumPage()));
   }
 
   void _showMusicSheet() {
@@ -52,6 +246,13 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 
+  String get _recDuration {
+    final s = _recTimer.elapsed.inSeconds;
+    final m = s ~/ 60;
+    final sec = s % 60;
+    return '${m.toString().padLeft(2, '0')}:${sec.toString().padLeft(2, '0')}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,36 +260,43 @@ class _CameraPageState extends State<CameraPage> {
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // 取景背景（演示用深色渐变占位，未接入实时相机）
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFF2A2724), Color(0xFF0E0D0C)],
+          // 实时相机预览
+          _cameraPreview(),
+          // 录制中红点 + 计时
+          if (_recording)
+            SafeArea(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 64),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 9,
+                        height: 9,
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(_recDuration,
+                          style: const TextStyle(color: Colors.white)),
+                    ],
+                  ),
+                ),
               ),
             ),
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.videocam_outlined,
-                    size: 46,
-                    color: Colors.white.withValues(alpha: 0.25),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    '相机预览（演示，未接入实时取景）',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.3),
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // 快门闪烁
+          if (_shutter)
+            Container(color: Colors.white.withValues(alpha: 0.85)),
           // 顶部状态栏 + 工具栏
           SafeArea(
             child: Column(
@@ -106,16 +314,11 @@ class _CameraPageState extends State<CameraPage> {
                       const Spacer(),
                       _SideTools(
                         flashOn: _flashOn,
-                        flipped: _flipped,
+                        flipped: _cameraIndex != 0,
                         countdown: _countdown,
-                        onFlip: () {
-                          setState(() => _flipped = !_flipped);
-                          _toast(_flipped ? '已切换至前摄像头' : '已切换至后摄像头');
-                        },
-                        onFlash: () {
-                          setState(() => _flashOn = !_flashOn);
-                          _toast(_flashOn ? '闪光灯开启' : '闪光灯关闭');
-                        },
+                        recording: _recording,
+                        onFlip: _flip,
+                        onFlash: _toggleFlash,
                         onCountdown: () {
                           setState(() => _countdown = !_countdown);
                           _toast(_countdown ? '倒计时 3 秒已开启' : '倒计时已关闭');
@@ -136,16 +339,16 @@ class _CameraPageState extends State<CameraPage> {
               children: [
                 _ModeTabs(
                   mode: _mode,
-                  onChanged: (v) => setState(() => _mode = v),
+                  onChanged: _onModeChanged,
                 ),
                 const SizedBox(height: 18),
                 _CaptureBar(
+                  mode: _mode,
                   pressing: _pressing,
-                  onRecordDown: () => setState(() => _pressing = true),
-                  onRecordUp: () {
-                    setState(() => _pressing = false);
-                    _toast('开始录制（演示，未接入相机）');
-                  },
+                  recording: _recording,
+                  onPhotoTap: _capturePhoto,
+                  onVideoDown: _startRecord,
+                  onVideoUp: _stopRecord,
                   onAlbum: _openAlbum,
                   onEffect: () => _toast('特效（敬请期待）'),
                 ),
@@ -155,6 +358,54 @@ class _CameraPageState extends State<CameraPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _cameraPreview() {
+    final c = _controller;
+    if (c != null && c.value.isInitialized) {
+      return Positioned.fill(child: CameraPreview(c));
+    }
+    if (_initError) {
+      return Container(
+        color: const Color(0xFF0E0D0C),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.camera_alt_outlined,
+                    color: Colors.white54, size: 40),
+                const SizedBox(height: 12),
+                const Text('无法访问相机',
+                    style: TextStyle(color: Colors.white70, fontSize: 14)),
+                const SizedBox(height: 6),
+                Text(
+                  _initErrorMsg ?? '',
+                  style:
+                      const TextStyle(color: Colors.white38, fontSize: 11),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                FilledButton(
+                  onPressed: () {
+                    setState(() => _initError = false);
+                    _initCamera();
+                  },
+                  child: const Text('重试'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    return Container(
+      color: const Color(0xFF0E0D0C),
+      child: const Center(
+        child: CircularProgressIndicator(color: Colors.white54),
       ),
     );
   }
@@ -244,6 +495,7 @@ class _SideTools extends StatelessWidget {
   final bool flashOn;
   final bool flipped;
   final bool countdown;
+  final bool recording;
   final VoidCallback onFlip;
   final VoidCallback onFlash;
   final VoidCallback onCountdown;
@@ -253,6 +505,7 @@ class _SideTools extends StatelessWidget {
     required this.flashOn,
     required this.flipped,
     required this.countdown,
+    required this.recording,
     required this.onFlip,
     required this.onFlash,
     required this.onCountdown,
@@ -265,7 +518,7 @@ class _SideTools extends StatelessWidget {
       _SideToolItem(
         icon: Icons.flip_camera_android,
         label: '翻转',
-        onTap: onFlip,
+        onTap: recording ? () {} : onFlip,
         active: flipped,
       ),
       _SideToolItem(
@@ -437,19 +690,27 @@ class _ModeTabs extends StatelessWidget {
 }
 
 class _CaptureBar extends StatelessWidget {
+  final int mode;
   final bool pressing;
-  final VoidCallback onRecordDown;
-  final VoidCallback onRecordUp;
+  final bool recording;
+  final VoidCallback onPhotoTap;
+  final VoidCallback onVideoDown;
+  final VoidCallback onVideoUp;
   final VoidCallback onAlbum;
   final VoidCallback onEffect;
 
   const _CaptureBar({
+    required this.mode,
     required this.pressing,
-    required this.onRecordDown,
-    required this.onRecordUp,
+    required this.recording,
+    required this.onPhotoTap,
+    required this.onVideoDown,
+    required this.onVideoUp,
     required this.onAlbum,
     required this.onEffect,
   });
+
+  bool get _isPhoto => mode == 1;
 
   @override
   Widget build(BuildContext context) {
@@ -465,11 +726,12 @@ class _CaptureBar extends StatelessWidget {
             label: '特效',
             onTap: onEffect,
           ),
-          // 录制按钮
+          // 录制/拍照按钮
           GestureDetector(
-            onTapDown: (_) => onRecordDown(),
-            onTapUp: (_) => onRecordUp(),
-            onTapCancel: onRecordUp,
+            onTap: _isPhoto ? onPhotoTap : null,
+            onTapDown: _isPhoto ? null : (_) => onVideoDown(),
+            onTapUp: _isPhoto ? null : (_) => onVideoUp(),
+            onTapCancel: _isPhoto ? null : onVideoUp,
             child: AnimatedScale(
               scale: pressing ? 0.88 : 1.0,
               duration: const Duration(milliseconds: 120),
@@ -481,12 +743,15 @@ class _CaptureBar extends StatelessWidget {
                   border: Border.all(color: Colors.white, width: 5),
                 ),
                 child: Center(
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: const BoxDecoration(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 120),
+                    width: recording ? 30 : 60,
+                    height: recording ? 30 : 60,
+                    decoration: BoxDecoration(
                       color: AppColors.accent,
-                      shape: BoxShape.circle,
+                      shape: recording ? BoxShape.rectangle : BoxShape.circle,
+                      borderRadius:
+                          recording ? BorderRadius.circular(8) : null,
                     ),
                   ),
                 ),
