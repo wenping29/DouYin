@@ -5,9 +5,10 @@ using DouYing.Server.Domain;
 
 namespace DouYing.Server.Controllers;
 
-public sealed class BackendPaths(string mediaRoot)
+public sealed class BackendPaths(string mediaRoot, string seedRoot)
 {
     public string MediaRoot { get; } = mediaRoot;
+    public string SeedRoot { get; } = seedRoot;
 }
 
 public sealed class BackendRuntime
@@ -257,7 +258,7 @@ public abstract class ApiControllerBase(DataStore db, AuthService auth, BackendP
             System.IO.File.Delete(full);
     }
 
-    protected static string? SafeChildPath(string root, string relative)
+    internal static string? SafeChildPath(string root, string relative)
     {
         var fullRoot = Path.GetFullPath(root) + Path.DirectorySeparatorChar;
         var full = Path.GetFullPath(Path.Combine(root, relative));

@@ -28,7 +28,7 @@ if (string.IsNullOrEmpty(secret))
     secret = "douying-dev-secret-change-me";
 builder.Services.AddSingleton<DataStore>(_ => new DataStore(projectRoot));
 builder.Services.AddSingleton<AuthService>(_ => new AuthService(secret));
-builder.Services.AddSingleton(new BackendPaths(mediaRoot));
+builder.Services.AddSingleton(new BackendPaths(mediaRoot, seedRoot));
 builder.Services.AddSingleton<BackendRuntime>();
 
 var app = builder.Build();
@@ -100,7 +100,6 @@ try
     await new SeedService(database, mediaRoot, seedRoot, auth).SeedIfEmptyAsync();
     app.Services.GetRequiredService<BackendRuntime>().StartedAt = Environment.TickCount64;
     app.MapControllers();
-    MediaEndpoints.Map(app, seedRoot);
     app.MapFallback("/api/{**path}", (HttpContext context) =>
         Results.Json(new
         {
