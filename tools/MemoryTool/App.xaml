@@ -1,0 +1,11 @@
+﻿<Application x:Class="MemoryTool.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:MemoryTool.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <converters:UsageToBrushConverter x:Key="UsageToBrushConverter"/>
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+        <converters:PercentageToPieConverter x:Key="PercentageToPieConverter"/>
+    </Application.Resources>
+</Application>

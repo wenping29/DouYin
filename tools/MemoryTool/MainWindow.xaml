@@ -1,0 +1,168 @@
+<Window x:Class="MemoryTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:MemoryTool.ViewModels"
+        mc:Ignorable="d"
+        Title="内存使用情况查看器" Height="650" Width="1000"
+        WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 系统内存概况 -->
+        <GroupBox Header="系统内存概况" Grid.Row="0" Margin="0 0 10 10" Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="120"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 文字信息区域 -->
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="150"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="总内存:"  Grid.Row="0"  Grid.Column="0" VerticalAlignment="Center" Margin="0 0 10 5"/>
+                    <TextBlock Text="{Binding SystemMemory.TotalMemoryFormatted}" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="0 0 0 5" FontSize="14" FontWeight="Bold"/>
+
+                    <TextBlock Text="已用内存:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 10 5"/>
+                    <TextBlock Text="{Binding SystemMemory.UsedMemoryFormatted}" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0 0 0 5" FontSize="14" FontWeight="Bold" Foreground="{Binding SystemMemory.UsagePercentage, Converter={StaticResource UsageToBrushConverter}}"/>
+
+                    <TextBlock Text="可用内存:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBlock Text="{Binding SystemMemory.AvailableMemoryFormatted}" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="0 0 0 0" FontSize="14"/>
+
+                    <TextBlock Text="使用率:" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Margin="20 0 10 5"/>
+                    <TextBlock Text="{Binding SystemMemory.UsagePercentage, StringFormat={}{0:F1}%}" Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" Margin="0 0 0 5" FontSize="14" FontWeight="Bold" Foreground="{Binding SystemMemory.UsagePercentage, Converter={StaticResource UsageToBrushConverter}}"/>
+
+                    <ProgressBar Value="{Binding SystemMemory.UsagePercentage}" Maximum="100" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Height="30" Margin="20 5 0 5" VerticalAlignment="Center">
+                        <ProgressBar.Background>
+                            <SolidColorBrush Color="#EEEEEE"/>
+                        </ProgressBar.Background>
+                    </ProgressBar>
+                </Grid>
+
+                <!-- 系统已用内存饼图 -->
+                <Grid Grid.Column="2" Width="100" Height="100" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid>
+                        <!-- 可用内存背景 (灰色) -->
+                        <Ellipse Width="100" Height="100" Fill="#AAAAAA"/>
+                        <!-- 已用内存饼图 -->
+                        <Path>
+                            <Path.Fill>
+                                <SolidColorBrush Color="{Binding SystemMemory.UsagePercentage, Converter={StaticResource UsageToBrushConverter}}"/>
+                            </Path.Fill>
+                            <Path.Data>
+                                <MultiBinding Converter="{StaticResource PercentageToPieConverter}">
+                                    <Binding Path="SystemMemory.UsagePercentage"/>
+                                    <Binding RelativeSource="{RelativeSource Self}"/>
+                                </MultiBinding>
+                            </Path.Data>
+                        </Path>
+                        <!-- 图例文字 -->
+                        <TextBlock Text="{Binding SystemMemory.UsagePercentage, StringFormat={}{0:F0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </GroupBox>
+
+        <!-- 下方内容区域 - 左侧进程列表，右侧饼图 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="280"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 进程列表 -->
+            <GroupBox Header="进程内存占用 (按内存降序排序)" Grid.Column="0" Margin="0 0 10 10">
+                <DataGrid ItemsSource="{Binding Processes}" AutoGenerateColumns="False" IsReadOnly="True" CanUserSortColumns="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="进程名称" Binding="{Binding ProcessName}" Width="*" SortDirection="Descending"/>
+                        <DataGridTextColumn Header="PID" Binding="{Binding ProcessId}" Width="60"/>
+                        <DataGridTextColumn Header="内存占用" Binding="{Binding WorkingSetFormatted}" Width="100" SortMemberPath="WorkingSet"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+
+            <!-- 进程内存占比饼图 -->
+            <GroupBox Header="进程内存占用TOP 6" Grid.Column="1" Margin="0 0 0 10" Padding="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="260"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ItemsControl ItemsSource="{Binding ProcessPieSlices}" Grid.Row="0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas Width="250" Height="250" HorizontalAlignment="Center"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Path Data="{Binding Geometry}" Stroke="White" StrokeThickness="1">
+                                    <Path.Fill>
+                                        <SolidColorBrush Color="{Binding Color}"/>
+                                    </Path.Fill>
+                                    <Path.ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding ProcessName}" FontWeight="Bold"/>
+                                            <TextBlock>
+                                                <Run Text="{Binding Percentage, StringFormat={}{0:F1}%, Mode=OneWay}"/>
+                                                <Run Text=" - "/>
+                                                <Run Text="{Binding SizeFormatted, Mode=OneWay}"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Path.ToolTip>
+                                </Path>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="5" Orientation="Vertical">
+                            <ItemsControl ItemsSource="{Binding ProcessPieSlices}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Vertical"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="2" VerticalAlignment="center">
+                                            <Rectangle Width="12" Height="12" Fill="{Binding Color}" Margin="0 2 5 0"/>
+                                            <TextBlock Text="{Binding ProcessName}" FontSize="11"/>
+                                            <TextBlock Text=" ({Binding Percentage:F0}%)" FontSize="11" Foreground="Gray"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </GroupBox>
+        </Grid>
+
+        <!-- 刷新按钮 -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="刷新" Command="{Binding RefreshCommand}" IsEnabled="{Binding IsRefreshing, Converter={StaticResource InverseBoolConverter}}" Padding="20 5" FontSize="14">
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

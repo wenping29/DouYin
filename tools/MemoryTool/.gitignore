@@ -1,0 +1,39 @@
+# Build result
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.cachefile
+
+# .NET
+*.log
+*.tmp
+appsettings.local.json
+
+# Output
+*.exe.config
+*.dll.config
+
+# User specific files
+*.userprefs
+*.csproj.user
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.DS_Store

@@ -1,5 +1,4 @@
 # server
-server/node_modules/
 server/data/
 server/.env
 server/media/videos/*
@@ -8,11 +7,7 @@ server/media/avatars/*
 !server/media/videos/.gitkeep
 !server/media/covers/.gitkeep
 !server/media/avatars/.gitkeep
-server-dotnet/bin/
-server-dotnet/obj/
 server-dotnet/data/
-server/bin/
-server/obj/
 server-dotnet/media/videos/*
 server-dotnet/media/covers/*
 server-dotnet/media/avatars/*
@@ -42,33 +37,19 @@ app/*.iml
 Thumbs.db
 *.log
 
+**/node_modules/
+**/dist/
+
+**/bin/Debug/
+**/bin/Release/
+**/obj/
+
+**/wwwroot/
+
+**/publish/
 
 tools/NoAd/dist/cleanview-adblock-0.1.0.zip
 
-tools/sp/admin/node_modules/
 tools/sp/admin/data/
-tools/sp/admin/dist/
-
-tools/sp/deploy/dist/
-
-
-tools/sp/server/bin/
-tools/sp/server/obj/
-tools/sp/server/wwwroot/
-
 
 tools/VideoPlayer/artifacts/install/
-tools/VideoPlayer/artifacts/publish/
-tools/VideoPlayer/src/VideoPlayer/bin/
-tools/VideoPlayer/src/VideoPlayer/obj/
-
-tools/WorkLogTool/src/Api/bin
-tools/WorkLogTool/src/Api/obj
-tools/WorkLogTool/src/Api/wwwroot
-
-tools/WorkLogTool/src/DesktopClient/bin
-tools/WorkLogTool/src/DesktopClient/obj
-tools/WorkLogTool/src/DesktopClient/publish
-
-tools/Shared/bin/
-tools/Shared/obj/
