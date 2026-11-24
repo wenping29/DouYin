@@ -36,6 +36,7 @@ app/*.iml
 .DS_Store
 Thumbs.db
 *.log
+*.mp3
 
 **/node_modules/
 **/dist/
